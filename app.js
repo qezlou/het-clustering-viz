@@ -29,15 +29,25 @@ class ClusteringVisualizer {
             const slider = document.getElementById(`${param}-slider`);
             const valueDisplay = document.getElementById(`${param}-value`);
             
+            // Add both input and touchmove events for better mobile support
             slider.addEventListener('input', (e) => {
                 valueDisplay.textContent = e.target.value;
                 this.updatePlot();
                 this.updateStatistics();
             });
+            
+            // Touch-specific event for mobile devices
+            slider.addEventListener('touchmove', (e) => {
+                // Prevent page scrolling while adjusting sliders
+                e.preventDefault();
+            }, { passive: false });
         });
 
         // Set up plot type buttons
         this.setupPlotControls();
+        
+        // Add mobile-specific touch handling
+        this.setupMobileInteractions();
         
         // Initial plot and statistics
         this.updatePlot();
@@ -105,12 +115,35 @@ class ClusteringVisualizer {
 
         const config = {
             responsive: true,
-            displayModeBar: true,
+            displayModeBar: window.innerWidth >= 768, // Hide mode bar on mobile
             modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d', 'autoScale2d'],
-            displaylogo: false
+            displaylogo: false,
+            doubleClick: 'reset',
+            scrollZoom: false, // Disable scroll zoom on mobile to prevent conflicts
+            staticPlot: window.innerWidth < 480 // Make static on very small screens
         };
 
         Plotly.newPlot('clustering-plot', [trace], layout, config);
+        
+        // Add resize listener for responsive updates
+        window.addEventListener('resize', this.debounce(() => {
+            if (document.getElementById('clustering-plot')) {
+                this.updatePlot();
+            }
+        }, 250));
+    }
+
+    // Debounce function for resize events
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
     }
 
     createLogTrace(rValues, xiData) {
@@ -179,81 +212,102 @@ class ClusteringVisualizer {
     }
 
     createLogLayout() {
+        const isMobile = window.innerWidth < 768;
+        
         return {
             xaxis: {
                 type: 'log',
                 title: {
                     text: 'Separation r [Mpc/h]',
-                    font: { size: 14, color: '#4a5568' }
+                    font: { size: isMobile ? 12 : 14, color: '#4a5568' }
                 },
                 gridcolor: '#e2e8f0',
-                tickfont: { color: '#718096' }
+                tickfont: { color: '#718096', size: isMobile ? 10 : 12 }
             },
             yaxis: {
                 type: 'log',
                 title: {
                     text: 'ξ(r)',
-                    font: { size: 14, color: '#4a5568' }
+                    font: { size: isMobile ? 12 : 14, color: '#4a5568' }
                 },
                 gridcolor: '#e2e8f0',
-                tickfont: { color: '#718096' }
+                tickfont: { color: '#718096', size: isMobile ? 10 : 12 }
             },
             plot_bgcolor: 'rgba(0,0,0,0)',
             paper_bgcolor: 'rgba(0,0,0,0)',
-            margin: { t: 20, b: 60, l: 80, r: 20 },
+            margin: { 
+                t: 20, 
+                b: isMobile ? 50 : 60, 
+                l: isMobile ? 60 : 80, 
+                r: isMobile ? 15 : 20 
+            },
             showlegend: false,
             hovermode: 'closest'
         };
     }
 
     createLinearLayout() {
+        const isMobile = window.innerWidth < 768;
+        
         return {
             xaxis: {
                 title: {
                     text: 'Separation r [Mpc/h]',
-                    font: { size: 14, color: '#4a5568' }
+                    font: { size: isMobile ? 12 : 14, color: '#4a5568' }
                 },
                 gridcolor: '#e2e8f0',
-                tickfont: { color: '#718096' }
+                tickfont: { color: '#718096', size: isMobile ? 10 : 12 }
             },
             yaxis: {
                 title: {
                     text: 'ξ(r)',
-                    font: { size: 14, color: '#4a5568' }
+                    font: { size: isMobile ? 12 : 14, color: '#4a5568' }
                 },
                 gridcolor: '#e2e8f0',
-                tickfont: { color: '#718096' }
+                tickfont: { color: '#718096', size: isMobile ? 10 : 12 }
             },
             plot_bgcolor: 'rgba(0,0,0,0)',
             paper_bgcolor: 'rgba(0,0,0,0)',
-            margin: { t: 20, b: 60, l: 80, r: 20 },
+            margin: { 
+                t: 20, 
+                b: isMobile ? 50 : 60, 
+                l: isMobile ? 60 : 80, 
+                r: isMobile ? 15 : 20 
+            },
             showlegend: false,
             hovermode: 'closest'
         };
     }
 
     createResidualLayout() {
+        const isMobile = window.innerWidth < 768;
+        
         return {
             xaxis: {
                 type: 'log',
                 title: {
                     text: 'Separation r [Mpc/h]',
-                    font: { size: 14, color: '#4a5568' }
+                    font: { size: isMobile ? 12 : 14, color: '#4a5568' }
                 },
                 gridcolor: '#e2e8f0',
-                tickfont: { color: '#718096' }
+                tickfont: { color: '#718096', size: isMobile ? 10 : 12 }
             },
             yaxis: {
                 title: {
                     text: 'Residuals from Power Law',
-                    font: { size: 14, color: '#4a5568' }
+                    font: { size: isMobile ? 12 : 14, color: '#4a5568' }
                 },
                 gridcolor: '#e2e8f0',
-                tickfont: { color: '#718096' }
+                tickfont: { color: '#718096', size: isMobile ? 10 : 12 }
             },
             plot_bgcolor: 'rgba(0,0,0,0)',
             paper_bgcolor: 'rgba(0,0,0,0)',
-            margin: { t: 20, b: 60, l: 80, r: 20 },
+            margin: { 
+                t: 20, 
+                b: isMobile ? 50 : 60, 
+                l: isMobile ? 60 : 80, 
+                r: isMobile ? 15 : 20 
+            },
             showlegend: false,
             hovermode: 'closest'
         };
@@ -363,6 +417,40 @@ class ClusteringVisualizer {
         }
         const button = document.querySelector('.animate-button');
         if (button) button.textContent = 'Animate Parameters';
+    }
+
+    setupMobileInteractions() {
+        // Add mobile-specific interactions
+        if ('ontouchstart' in window) {
+            // Add visual feedback for touch interactions
+            document.querySelectorAll('.plot-button').forEach(button => {
+                button.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.95)';
+                });
+                
+                button.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+            
+            // Improve tooltip behavior on mobile
+            document.querySelectorAll('.tooltip').forEach(tooltip => {
+                tooltip.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    const tooltiptext = this.querySelector('.tooltiptext');
+                    if (tooltiptext) {
+                        tooltiptext.style.visibility = 'visible';
+                        tooltiptext.style.opacity = '1';
+                        
+                        // Hide after 3 seconds
+                        setTimeout(() => {
+                            tooltiptext.style.visibility = 'hidden';
+                            tooltiptext.style.opacity = '0';
+                        }, 3000);
+                    }
+                });
+            });
+        }
     }
 }
 

@@ -70,7 +70,13 @@ const CONFIG = {
         subtitle: 'Interactive exploration of the two-point correlation function ξ(r)',
         showTooltips: true,
         showStatistics: true,
-        animationSpeed: 100 // milliseconds between frames
+        animationSpeed: 100, // milliseconds between frames
+        mobile: {
+            hideTooltips: false, // Keep tooltips on mobile
+            simplifiedControls: true,
+            largerTouchTargets: true,
+            reducedMargin: true
+        }
     },
     
     // GitHub settings

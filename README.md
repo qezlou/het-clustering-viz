@@ -24,6 +24,18 @@ An interactive web application for visualizing galaxy clustering statistics and 
 
 Visit the live application: [Your GitHub Pages URL]
 
+### 📱 Mobile Optimization
+
+The website is fully optimized for mobile devices with:
+- **Touch-friendly sliders** with larger touch targets
+- **Responsive layout** that stacks controls above the plot on mobile
+- **Optimized plot dimensions** for smaller screens
+- **Mobile-first CSS design** ensuring fast loading
+- **Simplified interactions** on very small screens
+- **Disabled scroll-zoom** to prevent conflicts with page scrolling
+
+To test mobile layout locally, use your browser's developer tools and toggle device simulation.
+
 ## 📊 Data
 
 The visualization uses synthetic galaxy clustering data generated from cosmological simulations. The data includes:

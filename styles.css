@@ -1,4 +1,4 @@
-/* Custom CSS for Galaxy Clustering Visualization */
+/* Custom CSS for Galaxy Clustering Visualization - Mobile First */
 
 :root {
     --primary-color: #667eea;
@@ -9,8 +9,10 @@
     --text-secondary: #4a5568;
     --text-muted: #718096;
     --border-color: #e2e8f0;
-    --shadow: 0 10px 30px rgba(0,0,0,0.1);
-    --border-radius: 15px;
+    --shadow: 0 8px 25px rgba(0,0,0,0.1);
+    --border-radius: 12px;
+    --mobile-padding: 15px;
+    --desktop-padding: 25px;
 }
 
 .parameter-info {
