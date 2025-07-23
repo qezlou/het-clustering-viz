@@ -66,8 +66,8 @@ const CONFIG = {
     
     // UI settings
     ui: {
-        title: 'Galaxy Clustering Visualization',
-        subtitle: 'Interactive exploration of the two-point correlation function ξ(r)',
+        title: 'Galaxies & Gravity: Exploring the Cosmic Web',
+        subtitle: 'Translating Observations into Cosmic Understanding',
         showTooltips: true,
         showStatistics: true,
         animationSpeed: 100, // milliseconds between frames
