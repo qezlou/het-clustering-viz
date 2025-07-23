@@ -1,0 +1,152 @@
+/* Custom CSS for Galaxy Clustering Visualization */
+
+:root {
+    --primary-color: #667eea;
+    --secondary-color: #764ba2;
+    --background-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --card-background: rgba(255, 255, 255, 0.95);
+    --text-primary: #2d3748;
+    --text-secondary: #4a5568;
+    --text-muted: #718096;
+    --border-color: #e2e8f0;
+    --shadow: 0 10px 30px rgba(0,0,0,0.1);
+    --border-radius: 15px;
+}
+
+.parameter-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.parameter-range {
+    font-size: 0.9em;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.slider-track {
+    position: relative;
+    height: 6px;
+    background: var(--border-color);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.slider-track::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    border-radius: 3px;
+    width: var(--progress, 50%);
+    transition: width 0.2s ease;
+}
+
+.statistics-panel {
+    background: rgba(102, 126, 234, 0.05);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+}
+
+.stat-label {
+    color: var(--text-secondary);
+}
+
+.stat-value {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.plot-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.plot-button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s ease;
+}
+
+.plot-button:hover {
+    background: var(--secondary-color);
+    transform: translateY(-1px);
+}
+
+.plot-button.active {
+    background: var(--secondary-color);
+    box-shadow: 0 4px 12px rgba(118, 75, 162, 0.3);
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: help;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: var(--text-primary);
+    color: white;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.8em;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+.correlation-strength {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.correlation-strong {
+    background: #48bb78;
+    color: white;
+}
+
+.correlation-moderate {
+    background: #ed8936;
+    color: white;
+}
+
+.correlation-weak {
+    background: #e53e3e;
+    color: white;
+}
