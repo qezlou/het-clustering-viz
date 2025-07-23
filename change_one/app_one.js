@@ -225,7 +225,13 @@ class ClusteringVisualizerOne {
         const layout = this.createLayoutFixed();
         const config = this.createConfig();
 
-        Plotly.newPlot('clustering-plot', traces, layout, config);
+        // Plot to both mobile and desktop containers
+        if (document.getElementById('clustering-plot')) {
+            Plotly.newPlot('clustering-plot', traces, layout, config);
+        }
+        if (document.getElementById('clustering-plot-desktop')) {
+            Plotly.newPlot('clustering-plot-desktop', traces, layout, config);
+        }
     }
 
     updateMassFunctionPlot(mValues, currentNmData) {
@@ -316,7 +322,14 @@ class ClusteringVisualizerOne {
         const massFunctionLayout = this.createMassFunctionLayoutFixed();
 
         const config = this.createConfig();
-        Plotly.newPlot('mass-function-plot', traces, massFunctionLayout, config);
+        
+        // Plot to both mobile and desktop containers
+        if (document.getElementById('mass-function-plot')) {
+            Plotly.newPlot('mass-function-plot', traces, massFunctionLayout, config);
+        }
+        if (document.getElementById('mass-function-plot-desktop')) {
+            Plotly.newPlot('mass-function-plot-desktop', traces, massFunctionLayout, config);
+        }
     }
 
     updateStatistics() {
@@ -546,7 +559,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Add resize listener for responsive updates
     window.addEventListener('resize', visualizerOne.debounce(() => {
-        if (document.getElementById('clustering-plot')) {
+        if (document.getElementById('clustering-plot') || document.getElementById('clustering-plot-desktop')) {
             visualizerOne.updatePlot();
         }
     }, 250));

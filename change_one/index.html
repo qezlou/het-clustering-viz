@@ -10,9 +10,18 @@
             order: 1;
         }
 
-        /* Mobile controls between plots */
+        /* Mobile-specific styles */
         .controls-mobile {
             display: block;
+        }
+
+        .mass-function-mobile,
+        .clustering-mobile {
+            display: block;
+        }
+
+        .plots-desktop {
+            display: none;
         }
 
         /* Desktop controls sidebar */
@@ -357,9 +366,20 @@
                 align-items: start;
             }
 
-            /* Hide mobile controls and show desktop controls */
+            /* Hide mobile controls and plots, show desktop versions */
             .controls-mobile {
                 display: none;
+            }
+
+            .mass-function-mobile,
+            .clustering-mobile {
+                display: none;
+            }
+
+            .plots-desktop {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
             }
 
             .controls-desktop {
@@ -370,12 +390,6 @@
 
             .plot-container {
                 order: 1;
-            }
-
-            .plots-wrapper {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 20px;
             }
 
             .statistics-grid {
@@ -396,6 +410,10 @@
 
             .plot-title {
                 font-size: 1.5em;
+            }
+
+            .mobile-about {
+                display: none;
             }
         }
 
@@ -433,9 +451,10 @@
         <div class="main-content">
             <div class="plot-container">
                 <div class="plots-wrapper">
-                    <div class="single-plot">
-                        <div class="plot-title">Two-Point Correlation Function ξ(r)</div>
-                        <div id="clustering-plot" style="width: 100%; height: 300px;"></div>
+                    <!-- Mass function plot first on mobile -->
+                    <div class="single-plot mass-function-mobile">
+                        <div class="plot-title">Halo Mass Function n(M)</div>
+                        <div id="mass-function-plot" style="width: 100%; height: 300px;"></div>
                     </div>
                     
                     <!-- Mobile controls between plots -->
@@ -467,9 +486,23 @@
                         </div>
                     </div>
                     
-                    <div class="single-plot">
-                        <div class="plot-title">Halo Mass Function n(M)</div>
-                        <div id="mass-function-plot" style="width: 100%; height: 300px;"></div>
+                    <!-- Clustering plot second on mobile -->
+                    <div class="single-plot clustering-mobile">
+                        <div class="plot-title">Two-Point Correlation Function ξ(r)</div>
+                        <div id="clustering-plot" style="width: 100%; height: 300px;"></div>
+                    </div>
+
+                    <!-- Desktop plots side by side -->
+                    <div class="plots-desktop">
+                        <div class="single-plot">
+                            <div class="plot-title">Two-Point Correlation Function ξ(r)</div>
+                            <div id="clustering-plot-desktop" style="width: 100%; height: 400px;"></div>
+                        </div>
+                        
+                        <div class="single-plot">
+                            <div class="plot-title">Halo Mass Function n(M)</div>
+                            <div id="mass-function-plot-desktop" style="width: 100%; height: 400px;"></div>
+                        </div>
                     </div>
                 </div>
                 
@@ -513,6 +546,12 @@
                             <span class="stat-value" id="nm-highmass">-</span>
                         </div>
                     </div>
+                </div>
+                
+                <!-- About section at the very bottom -->
+                <div class="info-box mobile-about">
+                    <h3>About This Visualization</h3>
+                    <p>This version allows you to explore how individual cosmological parameters affect galaxy clustering. Select a parameter and adjust its value to see the impact on the correlation function ξ(r) and halo mass function n(M).</p>
                 </div>
                 
                 <div class="loading" id="loading-message">Loading data...</div>
