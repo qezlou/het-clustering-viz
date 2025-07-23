@@ -22,37 +22,94 @@ class ClusteringVisualizerOne {
     initializeApp() {
         document.getElementById('loading-message').style.display = 'none';
         
-        // Set up event listeners
-        const parameterSelect = document.getElementById('parameter-select');
-        const valueSlider = document.getElementById('value-slider');
-        const showFiducial = document.getElementById('show-fiducial');
-        const showRange = document.getElementById('show-range');
+        // Set up event listeners for both mobile and desktop controls
+        this.setupControlListeners('', ''); // Mobile controls
+        this.setupControlListeners('-desktop', '-desktop'); // Desktop controls
         
-        parameterSelect.addEventListener('change', (e) => {
-            this.currentParameter = parseInt(e.target.value);
-            this.updatePlot();
-        });
+        // Set initial parameter to Ω_m and sync both controls
+        this.setParameter(1);
+        this.setValue(5);
         
-        valueSlider.addEventListener('input', (e) => {
-            this.currentValue = parseInt(e.target.value);
-            document.getElementById('value-display').textContent = `${e.target.value} / 9`;
-            this.updatePlot();
-        });
-        
-        showFiducial.addEventListener('change', () => {
-            this.updatePlot();
-        });
-        
-        showRange.addEventListener('change', () => {
-            this.updatePlot();
-        });
-
-        // Set initial parameter to Ω_m
-        parameterSelect.value = "1";
-        this.currentParameter = 1;
-        
-        // Initial plot
+        // Initial plot and statistics
         this.updatePlot();
+    }
+
+    setupControlListeners(suffix, displaySuffix) {
+        const parameterSelect = document.getElementById(`parameter-select${suffix}`);
+        const valueSlider = document.getElementById(`value-slider${suffix}`);
+        const showFiducial = document.getElementById(`show-fiducial${suffix}`);
+        
+        if (parameterSelect) {
+            parameterSelect.addEventListener('change', (e) => {
+                this.currentParameter = parseInt(e.target.value);
+                this.syncControls();
+                this.updatePlot();
+            });
+        }
+        
+        if (valueSlider) {
+            valueSlider.addEventListener('input', (e) => {
+                this.currentValue = parseInt(e.target.value);
+                this.syncValueDisplays();
+                this.updatePlot();
+            });
+            
+            // Improve mobile touch handling
+            valueSlider.addEventListener('touchstart', (e) => {
+                e.stopPropagation();
+            }, { passive: true });
+            
+            valueSlider.addEventListener('touchmove', (e) => {
+                e.stopPropagation();
+            }, { passive: true });
+        }
+        
+        if (showFiducial) {
+            showFiducial.addEventListener('change', () => {
+                // Sync fiducial checkboxes
+                const otherFiducial = document.getElementById(`show-fiducial${suffix === '' ? '-desktop' : ''}`);
+                if (otherFiducial) {
+                    otherFiducial.checked = showFiducial.checked;
+                }
+                this.updatePlot();
+            });
+        }
+    }
+
+    setParameter(param) {
+        this.currentParameter = param;
+        this.syncControls();
+    }
+
+    setValue(value) {
+        this.currentValue = value;
+        this.syncControls();
+        this.syncValueDisplays();
+    }
+
+    syncControls() {
+        // Sync parameter selects
+        const mobileSelect = document.getElementById('parameter-select');
+        const desktopSelect = document.getElementById('parameter-select-desktop');
+        
+        if (mobileSelect) mobileSelect.value = this.currentParameter;
+        if (desktopSelect) desktopSelect.value = this.currentParameter;
+        
+        // Sync value sliders
+        const mobileSlider = document.getElementById('value-slider');
+        const desktopSlider = document.getElementById('value-slider-desktop');
+        
+        if (mobileSlider) mobileSlider.value = this.currentValue;
+        if (desktopSlider) desktopSlider.value = this.currentValue;
+    }
+
+    syncValueDisplays() {
+        const mobileDisplay = document.getElementById('value-display');
+        const desktopDisplay = document.getElementById('value-display-desktop');
+        
+        const displayText = `${this.currentValue} / 9`;
+        if (mobileDisplay) mobileDisplay.textContent = displayText;
+        if (desktopDisplay) desktopDisplay.textContent = displayText;
     }
 
     updatePlot() {
@@ -103,7 +160,12 @@ class ClusteringVisualizerOne {
         traces.push(mainTrace);
 
         // Show fiducial model if requested
-        if (document.getElementById('show-fiducial').checked && this.currentParameter !== 0) {
+        const showFiducialMobile = document.getElementById('show-fiducial');
+        const showFiducialDesktop = document.getElementById('show-fiducial-desktop');
+        const showFiducial = (showFiducialMobile && showFiducialMobile.checked) || 
+                           (showFiducialDesktop && showFiducialDesktop.checked);
+        
+        if (showFiducial && this.currentParameter !== 0) {
             const fiducialXiData = this.data.xi_data[0][0]; // Fiducial model
             const fiducialTrace = {
                 x: rValues,
@@ -121,8 +183,8 @@ class ClusteringVisualizerOne {
             traces.push(fiducialTrace);
         }
 
-        // Show parameter range if requested
-        if (document.getElementById('show-range').checked && this.currentParameter !== 0) {
+        // Always show parameter range (default behavior)
+        if (this.currentParameter !== 0) {
             // Show min and max values for current parameter
             const minXiData = this.data.xi_data[this.currentParameter][0];
             const maxXiData = this.data.xi_data[this.currentParameter][9];
@@ -160,7 +222,7 @@ class ClusteringVisualizerOne {
             traces.push(minTrace, maxTrace);
         }
 
-        const layout = this.createLayout();
+        const layout = this.createLayoutFixed();
         const config = this.createConfig();
 
         Plotly.newPlot('clustering-plot', traces, layout, config);
@@ -190,7 +252,12 @@ class ClusteringVisualizerOne {
         traces.push(mainTrace);
 
         // Show fiducial model if requested
-        if (document.getElementById('show-fiducial').checked && this.currentParameter !== 0) {
+        const showFiducialMobile = document.getElementById('show-fiducial');
+        const showFiducialDesktop = document.getElementById('show-fiducial-desktop');
+        const showFiducial = (showFiducialMobile && showFiducialMobile.checked) || 
+                           (showFiducialDesktop && showFiducialDesktop.checked);
+
+        if (showFiducial && this.currentParameter !== 0) {
             const fiducialNmData = this.data.nm_data[0][0]; // Fiducial model
             const fiducialTrace = {
                 x: mValues,
@@ -208,8 +275,8 @@ class ClusteringVisualizerOne {
             traces.push(fiducialTrace);
         }
 
-        // Show parameter range if requested
-        if (document.getElementById('show-range').checked && this.currentParameter !== 0) {
+        // Always show parameter range (default behavior)
+        if (this.currentParameter !== 0) {
             const minNmData = this.data.nm_data[this.currentParameter][0];
             const maxNmData = this.data.nm_data[this.currentParameter][9];
             
@@ -246,38 +313,7 @@ class ClusteringVisualizerOne {
             traces.push(minTrace, maxTrace);
         }
 
-        const massFunctionLayout = {
-            xaxis: {
-                type: 'log',
-                title: {
-                    text: 'Halo Mass [M☉]',
-                    font: { size: 12 }
-                },
-                tickfont: { size: 10 }
-            },
-            yaxis: {
-                type: 'log',
-                title: {
-                    text: 'n(M) [Mpc⁻³ dex⁻¹]',
-                    font: { size: 12 }
-                },
-                tickfont: { size: 10 }
-            },
-            margin: { l: 50, r: 20, t: 20, b: 50 },
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: 'rgba(0,0,0,0)',
-            font: { family: 'Georgia, serif', size: 12 },
-            showlegend: true,
-            legend: {
-                x: 0.02,
-                y: 0.98,
-                bgcolor: 'rgba(255,255,255,0.8)',
-                bordercolor: '#E2E8F0',
-                borderwidth: 1,
-                font: { size: 10 }
-            },
-            hovermode: 'closest'
-        };
+        const massFunctionLayout = this.createMassFunctionLayoutFixed();
 
         const config = this.createConfig();
         Plotly.newPlot('mass-function-plot', traces, massFunctionLayout, config);
@@ -381,6 +417,95 @@ class ClusteringVisualizerOne {
                 bgcolor: 'rgba(255,255,255,0.8)',
                 bordercolor: '#e2e8f0',
                 borderwidth: 1
+            },
+            hovermode: 'closest'
+        };
+    }
+
+    createLayoutFixed() {
+        const isMobile = window.innerWidth < 768;
+        
+        return {
+            xaxis: {
+                type: 'log',
+                range: [-1, 2], // Fixed range: 0.1 to 100 Mpc/h
+                title: {
+                    text: 'Separation r [Mpc/h]',
+                    font: { size: isMobile ? 12 : 14, color: '#4a5568' }
+                },
+                gridcolor: '#e2e8f0',
+                tickfont: { color: '#718096', size: isMobile ? 10 : 12 }
+            },
+            yaxis: {
+                type: 'log',
+                range: [-4, 1], // Fixed range for ξ(r)
+                title: {
+                    text: 'ξ(r)',
+                    font: { size: isMobile ? 12 : 14, color: '#4a5568' }
+                },
+                gridcolor: '#e2e8f0',
+                tickfont: { color: '#718096', size: isMobile ? 10 : 12 }
+            },
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            margin: { 
+                t: 20, 
+                b: isMobile ? 50 : 60, 
+                l: isMobile ? 60 : 80, 
+                r: isMobile ? 15 : 20 
+            },
+            showlegend: true,
+            legend: {
+                x: 0.02,
+                y: 0.98,
+                bgcolor: 'rgba(255,255,255,0.8)',
+                bordercolor: '#e2e8f0',
+                borderwidth: 1
+            },
+            hovermode: 'closest'
+        };
+    }
+
+    createMassFunctionLayoutFixed() {
+        const isMobile = window.innerWidth < 768;
+        
+        return {
+            xaxis: {
+                type: 'log',
+                range: [10, 16], // Fixed range: 10^10 to 10^16 M_sun
+                title: {
+                    text: 'Halo Mass [M☉]',
+                    font: { size: isMobile ? 12 : 14, color: '#4a5568' }
+                },
+                gridcolor: '#e2e8f0',
+                tickfont: { color: '#718096', size: isMobile ? 10 : 12 }
+            },
+            yaxis: {
+                type: 'log',
+                range: [-8, -2], // Fixed range for n(M)
+                title: {
+                    text: 'n(M) [Mpc⁻³ dex⁻¹]',
+                    font: { size: isMobile ? 12 : 14, color: '#4a5568' }
+                },
+                gridcolor: '#e2e8f0',
+                tickfont: { color: '#718096', size: isMobile ? 10 : 12 }
+            },
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            margin: { 
+                t: 20, 
+                b: isMobile ? 50 : 60, 
+                l: isMobile ? 60 : 80, 
+                r: isMobile ? 15 : 20 
+            },
+            showlegend: true,
+            legend: {
+                x: 0.02,
+                y: 0.98,
+                bgcolor: 'rgba(255,255,255,0.8)',
+                bordercolor: '#e2e8f0',
+                borderwidth: 1,
+                font: { size: 10 }
             },
             hovermode: 'closest'
         };

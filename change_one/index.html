@@ -1,8 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="U        .controls-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            order: 1;
+        }
+
+        /* Mobile controls between plots */
+        .controls-mobile {
+            display: block;
+        }
+
+        /* Desktop controls sidebar */
+        .controls-desktop {
+            display: none;
+        }   <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cosmic Clustering - Change One Parameter</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -117,26 +133,28 @@
 
         .slider {
             width: 100%;
-            height: 8px;
-            border-radius: 4px;
+            height: 12px;
+            border-radius: 6px;
             background: #e2e8f0;
             outline: none;
             -webkit-appearance: none;
             appearance: none;
             cursor: pointer;
-            margin: 10px 0;
+            margin: 15px 0;
+            touch-action: pan-x;
         }
 
         .slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 24px;
-            height: 24px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: #667eea;
             cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
             transition: all 0.2s ease;
+            border: 3px solid white;
         }
 
         .slider::-webkit-slider-thumb:hover {
@@ -144,14 +162,27 @@
             transform: scale(1.1);
         }
 
+        .slider::-webkit-slider-thumb:active {
+            transform: scale(1.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
         .slider::-moz-range-thumb {
-            width: 24px;
-            height: 24px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: #667eea;
             cursor: pointer;
-            border: none;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            border: 3px solid white;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+        }
+
+        .slider::-moz-range-thumb:hover {
+            background: #5a6fd8;
+        }
+
+        .slider::-moz-range-thumb:active {
+            background: #4c51bf;
         }
 
         .value-display {
@@ -297,8 +328,8 @@
 
         /* Tablet and larger screens */
         @media (min-width: 768px) {
-            #clustering-plot {
-                height: 450px !important;
+            #clustering-plot, #mass-function-plot {
+                height: 400px !important;
             }
 
             body {
@@ -321,9 +352,24 @@
 
             .main-content {
                 display: grid;
-                grid-template-columns: 320px 1fr;
+                grid-template-columns: 1fr 320px;
                 gap: 25px;
                 align-items: start;
+            }
+
+            /* Hide mobile controls and show desktop controls */
+            .controls-mobile {
+                display: none;
+            }
+
+            .controls-desktop {
+                display: block;
+                padding: 25px;
+                order: 2;
+            }
+
+            .plot-container {
+                order: 1;
             }
 
             .plots-wrapper {
@@ -385,49 +431,40 @@
         </div>
 
         <div class="main-content">
-            <div class="controls-panel">
-                <h2>Parameter Selection</h2>
-                
-                <div class="parameter-selector">
-                    <label for="parameter-select">Choose Parameter to Vary:</label>
-                    <select id="parameter-select" class="parameter-select">
-                        <option value="0">Fiducial Model (Reference)</option>
-                        <option value="1">Ω_m (Matter Density)</option>
-                        <option value="2">σ_8 (Fluctuation Amplitude)</option>
-                        <option value="3">h (Hubble Parameter)</option>
-                        <option value="4">n_s (Spectral Index)</option>
-                    </select>
-                </div>
-
-                <div class="value-selector">
-                    <label for="value-slider">Parameter Value:</label>
-                    <input type="range" min="0" max="9" value="5" class="slider" id="value-slider">
-                    <div class="value-display" id="value-display">5 / 9</div>
-                </div>
-
-                <div class="comparison-panel">
-                    <h3>Comparison Options</h3>
-                    <div class="comparison-checkbox">
-                        <input type="checkbox" id="show-fiducial" checked>
-                        <label for="show-fiducial">Show Fiducial Model</label>
-                    </div>
-                    <div class="comparison-checkbox">
-                        <input type="checkbox" id="show-range">
-                        <label for="show-range">Show Parameter Range</label>
-                    </div>
-                </div>
-
-                <div class="info-box">
-                    <h3>About This Visualization</h3>
-                    <p>This version allows you to explore how individual cosmological parameters affect galaxy clustering. Select a parameter and adjust its value to see the impact on the correlation function ξ(r).</p>
-                </div>
-            </div>
-
             <div class="plot-container">
                 <div class="plots-wrapper">
                     <div class="single-plot">
                         <div class="plot-title">Two-Point Correlation Function ξ(r)</div>
                         <div id="clustering-plot" style="width: 100%; height: 300px;"></div>
+                    </div>
+                    
+                    <!-- Mobile controls between plots -->
+                    <div class="controls-panel controls-mobile">
+                        <h2>Parameter Selection</h2>
+                        
+                        <div class="parameter-selector">
+                            <label for="parameter-select">Choose Parameter to Vary:</label>
+                            <select id="parameter-select" class="parameter-select">
+                                <option value="0">Fiducial Model (Reference)</option>
+                                <option value="1">Ω_m (Matter Density)</option>
+                                <option value="2">σ_8 (Fluctuation Amplitude)</option>
+                                <option value="3">h (Hubble Parameter)</option>
+                                <option value="4">n_s (Spectral Index)</option>
+                            </select>
+                        </div>
+
+                        <div class="value-selector">
+                            <label for="value-slider">Parameter Value:</label>
+                            <input type="range" min="0" max="9" value="5" class="slider" id="value-slider">
+                            <div class="value-display" id="value-display">5 / 9</div>
+                        </div>
+
+                        <div class="comparison-panel">
+                            <div class="comparison-checkbox">
+                                <input type="checkbox" id="show-fiducial" checked>
+                                <label for="show-fiducial">Show Fiducial Model</label>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="single-plot">
@@ -479,6 +516,40 @@
                 </div>
                 
                 <div class="loading" id="loading-message">Loading data...</div>
+            </div>
+
+            <!-- Desktop controls sidebar -->
+            <div class="controls-panel controls-desktop">
+                <h2>Parameter Selection</h2>
+                
+                <div class="parameter-selector">
+                    <label for="parameter-select-desktop">Choose Parameter to Vary:</label>
+                    <select id="parameter-select-desktop" class="parameter-select">
+                        <option value="0">Fiducial Model (Reference)</option>
+                        <option value="1">Ω_m (Matter Density)</option>
+                        <option value="2">σ_8 (Fluctuation Amplitude)</option>
+                        <option value="3">h (Hubble Parameter)</option>
+                        <option value="4">n_s (Spectral Index)</option>
+                    </select>
+                </div>
+
+                <div class="value-selector">
+                    <label for="value-slider-desktop">Parameter Value:</label>
+                    <input type="range" min="0" max="9" value="5" class="slider" id="value-slider-desktop">
+                    <div class="value-display" id="value-display-desktop">5 / 9</div>
+                </div>
+
+                <div class="comparison-panel">
+                    <div class="comparison-checkbox">
+                        <input type="checkbox" id="show-fiducial-desktop" checked>
+                        <label for="show-fiducial-desktop">Show Fiducial Model</label>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h3>About This Visualization</h3>
+                    <p>This version allows you to explore how individual cosmological parameters affect galaxy clustering. Select a parameter and adjust its value to see the impact on the correlation function ξ(r) and halo mass function n(M).</p>
+                </div>
             </div>
         </div>
     </div>
