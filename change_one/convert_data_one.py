@@ -8,7 +8,9 @@ def convert_h5_to_json_one():
     # Read the H5 data
     with h5py.File('data_one.h5', 'r') as f:
         xi_data = f['xi'][:]
+        nm_data = f['nm'][:]
         r_values = f['r_values'][:]
+        m_values = f['m_values'][:]
         
         # Read parameter info
         param_info = {}
@@ -27,12 +29,17 @@ def convert_h5_to_json_one():
     web_data = {
         'parameters': param_info,
         'r_values': r_values.tolist(),
+        'm_values': m_values.tolist(),
         'xi_data': xi_data.tolist(),
+        'nm_data': nm_data.tolist(),
         'metadata': {
-            'description': 'Galaxy clustering correlation function ξ(r) - One parameter at a time',
-            'dimensions': list(xi_data.shape),
+            'description': 'Galaxy clustering and halo mass function - One parameter at a time',
+            'xi_dimensions': list(xi_data.shape),
+            'nm_dimensions': list(nm_data.shape),
             'r_unit': 'Mpc/h',
+            'm_unit': 'M_sun',
             'xi_description': 'Two-point correlation function',
+            'nm_description': 'Halo mass function',
             'data_type': 'one_by_one_parameters'
         }
     }
@@ -42,7 +49,8 @@ def convert_h5_to_json_one():
         json.dump(web_data, f, indent=2)
     
     print("Data converted successfully to data_one.json")
-    print(f"Data shape: {xi_data.shape}")
+    print(f"ξ(r) data shape: {xi_data.shape}")
+    print(f"n(M) data shape: {nm_data.shape}")
     print("Parameters:")
     for i, info in param_info.items():
         print(f"  {i}: {info['name']} - {info['description']}")

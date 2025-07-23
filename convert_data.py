@@ -8,13 +8,13 @@ def convert_h5_to_json():
     # Read the H5 data
     with h5py.File('data.h5', 'r') as f:
         xi_data = f['xi'][:]
+        nm_data = f['nm'][:]
+        r_values = f['r_values'][:]
+        m_values = f['m_values'][:]
         param1 = f['param1'][:]
         param2 = f['param2'][:]
         param3 = f['param3'][:]
         param4 = f['param4'][:]
-    
-    # Create r values (separation scales) - typically logarithmic spacing
-    r_values = np.logspace(-1, 2, 40)  # 0.1 to 100 Mpc/h
     
     # Prepare data structure for JSON
     web_data = {
@@ -25,12 +25,17 @@ def convert_h5_to_json():
             'param4': param4.tolist()
         },
         'r_values': r_values.tolist(),
+        'm_values': m_values.tolist(),
         'xi_data': xi_data.tolist(),
+        'nm_data': nm_data.tolist(),
         'metadata': {
-            'description': 'Galaxy clustering correlation function ξ(r)',
-            'dimensions': list(xi_data.shape),
+            'description': 'Galaxy clustering and halo mass function data',
+            'xi_dimensions': list(xi_data.shape),
+            'nm_dimensions': list(nm_data.shape),
             'r_unit': 'Mpc/h',
-            'xi_description': 'Two-point correlation function'
+            'm_unit': 'M_sun',
+            'xi_description': 'Two-point correlation function',
+            'nm_description': 'Halo mass function'
         }
     }
     
@@ -39,12 +44,15 @@ def convert_h5_to_json():
         json.dump(web_data, f, indent=2)
     
     print("Data converted successfully to data.json")
-    print(f"Data shape: {xi_data.shape}")
+    print(f"ξ(r) data shape: {xi_data.shape}")
+    print(f"n(M) data shape: {nm_data.shape}")
     print(f"Parameter ranges:")
     print(f"  param1: {param1.min()} - {param1.max()}")
     print(f"  param2: {param2.min()} - {param2.max()}")
     print(f"  param3: {param3.min()} - {param3.max()}")
     print(f"  param4: {param4.min()} - {param4.max()}")
+    print(f"r values: {len(r_values)} points from {r_values[0]:.2f} to {r_values[-1]:.1f} Mpc/h")
+    print(f"M values: {len(m_values)} points from {m_values[0]:.1e} to {m_values[-1]:.1e} M_sun")
 
 if __name__ == "__main__":
     convert_h5_to_json()

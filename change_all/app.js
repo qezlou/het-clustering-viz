@@ -55,7 +55,7 @@ class ClusteringVisualizer {
     }
 
     setupPlotControls() {
-        const plotContainer = document.querySelector('.plot-container');
+        const clusteringPlot = document.querySelector('.single-plot:first-child');
         const controlsHtml = `
             <div class="plot-controls">
                 <button class="plot-button active" onclick="visualizer.setPlotType('log')">Log-Log</button>
@@ -64,7 +64,7 @@ class ClusteringVisualizer {
             </div>
         `;
         
-        const plotTitle = plotContainer.querySelector('.plot-title');
+        const plotTitle = clusteringPlot.querySelector('.plot-title');
         plotTitle.insertAdjacentHTML('afterend', controlsHtml);
     }
 
@@ -77,7 +77,13 @@ class ClusteringVisualizer {
         });
         event.target.classList.add('active');
         
-        this.updatePlot();
+        // Only update the clustering plot
+        if (this.data) {
+            const params = this.getCurrentParameters();
+            const xiData = this.data.xi_data[params.param1][params.param2][params.param3][params.param4];
+            const rValues = this.data.r_values;
+            this.updateClusteringPlot(rValues, xiData);
+        }
     }
 
     getCurrentParameters() {
@@ -94,8 +100,25 @@ class ClusteringVisualizer {
 
         const params = this.getCurrentParameters();
         const xiData = this.data.xi_data[params.param1][params.param2][params.param3][params.param4];
+        const nmData = this.data.nm_data[params.param1][params.param2][params.param3][params.param4];
         const rValues = this.data.r_values;
+        const mValues = this.data.m_values;
 
+        // Update clustering plot
+        this.updateClusteringPlot(rValues, xiData);
+        
+        // Update mass function plot
+        this.updateMassFunctionPlot(mValues, nmData);
+        
+        // Add resize listener for responsive updates
+        window.addEventListener('resize', this.debounce(() => {
+            if (document.getElementById('clustering-plot')) {
+                this.updatePlot();
+            }
+        }, 250));
+    }
+
+    updateClusteringPlot(rValues, xiData) {
         let trace, layout;
 
         switch (this.currentPlotType) {
@@ -113,24 +136,67 @@ class ClusteringVisualizer {
                 break;
         }
 
-        const config = {
+        const config = this.getPlotConfig();
+        Plotly.newPlot('clustering-plot', [trace], layout, config);
+    }
+
+    updateMassFunctionPlot(mValues, nmData) {
+        const trace = {
+            x: mValues,
+            y: nmData,
+            type: 'scatter',
+            mode: 'lines+markers',
+            line: {
+                color: '#48bb78',
+                width: 3
+            },
+            marker: {
+                color: '#38a169',
+                size: 4
+            },
+            name: 'n(M)',
+            hovertemplate: 'M: %{x:.2e} M☉<br>n(M): %{y:.3e}<extra></extra>'
+        };
+
+        const layout = {
+            xaxis: {
+                type: 'log',
+                title: {
+                    text: 'Halo Mass [M☉]',
+                    font: { size: 12 }
+                },
+                tickfont: { size: 10 }
+            },
+            yaxis: {
+                type: 'log',
+                title: {
+                    text: 'n(M) [Mpc⁻³ dex⁻¹]',
+                    font: { size: 12 }
+                },
+                tickfont: { size: 10 }
+            },
+            margin: { l: 50, r: 20, t: 20, b: 50 },
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: { family: 'Georgia, serif', size: 12 },
+            showlegend: false,
+            hovermode: 'closest'
+        };
+
+        const config = this.getPlotConfig();
+        Plotly.newPlot('mass-function-plot', [trace], layout, config);
+    }
+
+    getPlotConfig() {
+        return {
             responsive: true,
-            displayModeBar: window.innerWidth >= 768, // Hide mode bar on mobile
+            displayModeBar: window.innerWidth >= 768,
             modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d', 'autoScale2d'],
             displaylogo: false,
             doubleClick: 'reset',
-            scrollZoom: false, // Disable scroll zoom on mobile to prevent conflicts
-            staticPlot: window.innerWidth < 480 // Make static on very small screens
+            scrollZoom: false,
+            staticPlot: window.innerWidth < 480
         };
-
-        Plotly.newPlot('clustering-plot', [trace], layout, config);
-        
-        // Add resize listener for responsive updates
-        window.addEventListener('resize', this.debounce(() => {
-            if (document.getElementById('clustering-plot')) {
-                this.updatePlot();
-            }
-        }, 250));
     }
 
     // Debounce function for resize events
@@ -318,62 +384,61 @@ class ClusteringVisualizer {
 
         const params = this.getCurrentParameters();
         const xiData = this.data.xi_data[params.param1][params.param2][params.param3][params.param4];
+        const nmData = this.data.nm_data[params.param1][params.param2][params.param3][params.param4];
+        const rValues = this.data.r_values;
+        const mValues = this.data.m_values;
         
-        // Calculate statistics
+        // Calculate ξ(r) statistics
         const maxXi = Math.max(...xiData);
-        const minXi = Math.min(...xiData);
-        const avgXi = xiData.reduce((a, b) => a + b, 0) / xiData.length;
+        const maxXiIndex = xiData.indexOf(maxXi);
+        const peakR = rValues[maxXiIndex];
         
-        // Find correlation length (approximate)
-        const corrLength = this.data.r_values[xiData.findIndex(xi => xi < avgXi * 0.1)];
-        
-        // Update statistics display
-        const statsHtml = `
-            <div class="statistics-panel">
-                <h3 style="margin-bottom: 10px; color: #4a5568;">Current Statistics</h3>
-                <div class="stat-item">
-                    <span class="stat-label">Maximum ξ(r):</span>
-                    <span class="stat-value">${maxXi.toFixed(4)}</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Minimum ξ(r):</span>
-                    <span class="stat-value">${minXi.toFixed(4)}</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Average ξ(r):</span>
-                    <span class="stat-value">${avgXi.toFixed(4)}</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Correlation Length:</span>
-                    <span class="stat-value">${corrLength ? corrLength.toFixed(2) : 'N/A'} Mpc/h</span>
-                </div>
-                <div class="correlation-strength ${this.getCorrelationStrengthClass(maxXi)}">
-                    ${this.getCorrelationStrengthText(maxXi)}
-                </div>
-            </div>
-        `;
-        
-        // Remove existing statistics panel if it exists
-        const existingStats = document.querySelector('.statistics-panel');
-        if (existingStats) {
-            existingStats.remove();
+        // Find zero crossing (approximate)
+        let zeroCrossing = 'N/A';
+        for (let i = 1; i < xiData.length; i++) {
+            if (xiData[i-1] > 0 && xiData[i] <= 0) {
+                zeroCrossing = rValues[i].toFixed(2);
+                break;
+            }
         }
         
-        // Add new statistics panel
-        const controlsPanel = document.querySelector('.controls-panel');
-        controlsPanel.insertAdjacentHTML('beforeend', statsHtml);
-    }
-
-    getCorrelationStrengthClass(maxXi) {
-        if (maxXi > 0.5) return 'correlation-strong';
-        if (maxXi > 0.1) return 'correlation-moderate';
-        return 'correlation-weak';
-    }
-
-    getCorrelationStrengthText(maxXi) {
-        if (maxXi > 0.5) return 'Strong Clustering';
-        if (maxXi > 0.1) return 'Moderate Clustering';
-        return 'Weak Clustering';
+        // Calculate integral (Simpson's rule approximation)
+        let integral = 0;
+        for (let i = 1; i < xiData.length; i++) {
+            integral += (xiData[i] + xiData[i-1]) * (rValues[i] - rValues[i-1]) / 2;
+        }
+        
+        // Calculate n(M) statistics
+        const maxNm = Math.max(...nmData);
+        const maxNmIndex = nmData.indexOf(maxNm);
+        const peakM = mValues[maxNmIndex];
+        
+        // Calculate total number density (approximate integral)
+        let totalNm = 0;
+        for (let i = 1; i < nmData.length; i++) {
+            totalNm += (nmData[i] + nmData[i-1]) * (Math.log10(mValues[i]) - Math.log10(mValues[i-1])) / 2;
+        }
+        
+        // Calculate high-mass objects (> 10^14 M_sun)
+        let highMassNm = 0;
+        for (let i = 0; i < mValues.length; i++) {
+            if (mValues[i] > 1e14) {
+                if (i > 0) {
+                    highMassNm += (nmData[i] + nmData[i-1]) * (Math.log10(mValues[i]) - Math.log10(mValues[i-1])) / 2;
+                }
+            }
+        }
+        
+        // Update statistics display
+        document.getElementById('xi-max').textContent = maxXi.toFixed(4);
+        document.getElementById('xi-peak-r').textContent = peakR.toFixed(2);
+        document.getElementById('xi-zero').textContent = zeroCrossing;
+        document.getElementById('xi-integral').textContent = integral.toFixed(3);
+        
+        document.getElementById('nm-max').textContent = maxNm.toExponential(2);
+        document.getElementById('nm-peak-m').textContent = peakM.toExponential(1);
+        document.getElementById('nm-total').textContent = totalNm.toExponential(2);
+        document.getElementById('nm-highmass').textContent = highMassNm.toExponential(2);
     }
 
     // Animation feature for parameter exploration
