@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Clustering - Change One Parameter</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="config_one.js"></script>
+    <link rel="stylesheet" href="styles_one.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Palatino Linotype', 'Book Antiqua', 'Times New Roman', serif;
+            background: linear-gradient(135deg, #000000 0%, #000000 100%);
+            min-height: 100vh;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0;
+            padding: 10px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+            padding: 15px 10px;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1em;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .controls-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            order: 2;
+        }
+
+        .controls-panel h2 {
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+
+        .parameter-selector {
+            margin-bottom: 20px;
+        }
+
+        .parameter-selector label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1em;
+        }
+
+        .parameter-select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            font-size: 1em;
+            color: #2d3748;
+            cursor: pointer;
+        }
+
+        .parameter-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .value-selector {
+            margin-bottom: 20px;
+        }
+
+        .value-selector label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1em;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #e2e8f0;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            background: #5a6fd8;
+            transform: scale(1.1);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .value-display {
+            text-align: center;
+            font-weight: bold;
+            color: #4a5568;
+            margin-top: 5px;
+            font-size: 1.1em;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .comparison-panel {
+            background: rgba(102, 126, 234, 0.05);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 15px;
+        }
+
+        .comparison-panel h3 {
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        .comparison-checkbox {
+            margin-bottom: 8px;
+        }
+
+        .comparison-checkbox input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        .comparison-checkbox label {
+            color: #2d3748;
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+
+        .plot-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            order: 1;
+        }
+
+        .plot-title {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        .info-box {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 15px;
+        }
+
+        .info-box h3 {
+            color: #4a5568;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        .info-box p {
+            color: #718096;
+            line-height: 1.4;
+            font-size: 0.9em;
+            margin: 0;
+        }
+
+        .loading {
+            text-align: center;
+            color: #718096;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        /* Mobile-specific plot adjustments */
+        #clustering-plot {
+            height: 350px !important;
+        }
+
+        /* Tablet and larger screens */
+        @media (min-width: 768px) {
+            #clustering-plot {
+                height: 450px !important;
+            }
+
+            body {
+                font-size: 16px;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2.2em;
+            }
+
+            .header p {
+                font-size: 1.1em;
+            }
+
+            .main-content {
+                display: grid;
+                grid-template-columns: 320px 1fr;
+                gap: 25px;
+                align-items: start;
+            }
+
+            .controls-panel {
+                padding: 25px;
+                order: 1;
+            }
+
+            .plot-container {
+                padding: 25px;
+                min-height: 600px;
+                order: 2;
+            }
+
+            .plot-title {
+                font-size: 1.5em;
+            }
+        }
+
+        /* Desktop screens */
+        @media (min-width: 1024px) {
+            .main-content {
+                grid-template-columns: 350px 1fr;
+                gap: 30px;
+            }
+
+            .header h1 {
+                font-size: 2.5em;
+            }
+
+            .header p {
+                font-size: 1.2em;
+            }
+        }
+
+        /* Large desktop screens */
+        @media (min-width: 1440px) {
+            .container {
+                max-width: 1400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌌 Cosmic Clustering - Change One Parameter</h1>
+            <p>Explore individual parameter effects on galaxy clustering</p>
+        </div>
+
+        <div class="main-content">
+            <div class="controls-panel">
+                <h2>Parameter Selection</h2>
+                
+                <div class="parameter-selector">
+                    <label for="parameter-select">Choose Parameter to Vary:</label>
+                    <select id="parameter-select" class="parameter-select">
+                        <option value="0">Fiducial Model (Reference)</option>
+                        <option value="1">Ω_m (Matter Density)</option>
+                        <option value="2">σ_8 (Fluctuation Amplitude)</option>
+                        <option value="3">h (Hubble Parameter)</option>
+                        <option value="4">n_s (Spectral Index)</option>
+                    </select>
+                </div>
+
+                <div class="value-selector">
+                    <label for="value-slider">Parameter Value:</label>
+                    <input type="range" min="0" max="9" value="5" class="slider" id="value-slider">
+                    <div class="value-display" id="value-display">5 / 9</div>
+                </div>
+
+                <div class="comparison-panel">
+                    <h3>Comparison Options</h3>
+                    <div class="comparison-checkbox">
+                        <input type="checkbox" id="show-fiducial" checked>
+                        <label for="show-fiducial">Show Fiducial Model</label>
+                    </div>
+                    <div class="comparison-checkbox">
+                        <input type="checkbox" id="show-range">
+                        <label for="show-range">Show Parameter Range</label>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h3>About This Visualization</h3>
+                    <p>This version allows you to explore how individual cosmological parameters affect galaxy clustering. Select a parameter and adjust its value to see the impact on the correlation function ξ(r).</p>
+                </div>
+            </div>
+
+            <div class="plot-container">
+                <div class="plot-title">Two-Point Correlation Function ξ(r)</div>
+                <div id="clustering-plot" style="width: 100%; height: 400px;"></div>
+                <div class="loading" id="loading-message">Loading data...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // MathJax configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script src="app_one.js"></script>
+
+    <div style="text-align: center; margin-top: 30px; color: #a0aec0; font-size: 0.9em;">
+        View the project on
+        <a href="https://github.com/qezlou/gal_goku" target="_blank" style="color: #667eea; text-decoration: underline;">
+            GitHub
+        </a>
+        | 
+        <a href="../change_all/" style="color: #667eea; text-decoration: underline;">
+            Change All Parameters Version
+        </a>
+        |
+        <a href="../" style="color: #667eea; text-decoration: underline;">
+            Back to Main
+        </a>
+    </div>
+</body>
+</html>

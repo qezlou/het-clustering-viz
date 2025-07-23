@@ -1,0 +1,33 @@
+/* CSS Variables for One Parameter Version */
+:root {
+    --primary-color: #667eea;
+    --secondary-color: #764ba2;
+    --background-gradient: linear-gradient(135deg, #000000 0%, #000000 100%);
+    --card-background: rgba(255, 255, 255, 0.95);
+    --text-primary: #2d3748;
+    --text-secondary: #4a5568;
+    --text-muted: #718096;
+    --border-color: #e2e8f0;
+    --shadow: 0 8px 25px rgba(0,0,0,0.1);
+    --border-radius: 12px;
+    --mobile-padding: 15px;
+    --desktop-padding: 25px;
+}
+
+/* Additional styles specific to one parameter version */
+.parameter-select {
+    font-family: inherit;
+}
+
+.parameter-select option {
+    padding: 8px;
+}
+
+.comparison-panel {
+    transition: all 0.2s ease;
+}
+
+.comparison-checkbox input[type="checkbox"]:checked + label {
+    color: var(--primary-color);
+    font-weight: 600;
+}

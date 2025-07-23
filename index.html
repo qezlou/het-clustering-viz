@@ -415,8 +415,8 @@
 
     <div class="container">
         <div class="header">
-            <h1>Exploring the Cosmic Clustering</h1>
-            <p>Translating the observations into fundamental physics</p>
+            <h1>🌌 Cosmic Clustering Visualization Hub</h1>
+            <p>Choose your exploration method</p>
         </div>
 
         <div class="main-content">
@@ -505,11 +505,46 @@
     <script src="app.js"></script>
     </script>
 
-<div style="text-align: center; margin-top: 30px; color: #a0aec0; font-size: 0.9em;">
-    View the project on
-    <a href="https://github.com/qezlou/gal_goku" target="_blank" style="color: #667eea; text-decoration: underline;">
-        GitHub
-    </a>
+<div style="text-align: center; margin-top: 30px; padding: 20px;">
+    <div style="background: rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+        <h2 style="color: white; margin-bottom: 15px;">Choose Your Exploration Method</h2>
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <a href="change_all/" style="
+                display: inline-block;
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: white;
+                text-decoration: none;
+                padding: 15px 25px;
+                border-radius: 10px;
+                font-weight: 600;
+                transition: transform 0.2s ease;
+            " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                🔄 Change All Parameters<br>
+                <small style="opacity: 0.8;">Explore multi-dimensional parameter space</small>
+            </a>
+            
+            <a href="change_one/" style="
+                display: inline-block;
+                background: linear-gradient(135deg, #48bb78, #38a169);
+                color: white;
+                text-decoration: none;
+                padding: 15px 25px;
+                border-radius: 10px;
+                font-weight: 600;
+                transition: transform 0.2s ease;
+            " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                📊 Change One Parameter<br>
+                <small style="opacity: 0.8;">Focus on individual parameter effects</small>
+            </a>
+        </div>
+    </div>
+    
+    <div style="color: #a0aec0; font-size: 0.9em;">
+        View the project on
+        <a href="https://github.com/qezlou/gal_goku" target="_blank" style="color: #667eea; text-decoration: underline;">
+            GitHub
+        </a>
+    </div>
 </div>
 </body>
 </html>
