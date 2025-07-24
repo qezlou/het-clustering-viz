@@ -123,7 +123,7 @@ class CosmologyDataLoader:
         param_data = self.hmf_data[param_key]
         
         # Handle both single curve and multiple curves
-        hmf_vals = param_data['stat_vals']
+        hmf_vals = param_data['hmf_vals']
         if isinstance(hmf_vals[0], list):
             # Multiple curves - use value_index
             curve_index = min(value_index, len(hmf_vals) - 1)
@@ -135,7 +135,7 @@ class CosmologyDataLoader:
     def get_reference_data(self):
         """Get reference/fiducial model data"""
         xi_ref = np.array(self.xi_data['xi_ref_vals'])
-        hmf_ref = np.array(self.hmf_data['stat_ref_vals'])
+        hmf_ref = np.array(self.hmf_data['hmf_ref_vals'])
         r_vals = np.array(self.xi_data['rvals'])
         m_vals = np.array(self.hmf_data['logMh'])
         

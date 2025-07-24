@@ -35,10 +35,37 @@ class ClusteringVisualizerOne {
             this.data.parameters.forEach((param, index) => {
                 const option = document.createElement('option');
                 option.value = index;
-                option.textContent = `${param.name} (${param.range_string})`;
+                // Use LaTeX-formatted name
+                const latexName = this.formatParameterName(param.name);
+                option.innerHTML = `${latexName} (${param.range_string})`;
                 select.appendChild(option);
             });
         });
+        
+        // Trigger MathJax to re-render the selects
+        this.renderMathJax();
+    }
+
+    formatParameterName(name) {
+        // Convert parameter names to LaTeX format for display
+        if (name === 'Fiducial Model') {
+            return 'Fiducial Model';
+        }
+        
+        // If the name already contains LaTeX commands (backslashes), wrap it
+        if (name.includes('\\')) {
+            return `\\(${name}\\)`;
+        }
+        
+        // For simple names, just return as is
+        return name;
+    }
+
+    renderMathJax() {
+        // Re-render MathJax for dynamic content
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            window.MathJax.typesetPromise().catch((err) => console.log('MathJax error: ' + err.message));
+        }
     }
 
     initializeApp() {
@@ -54,6 +81,9 @@ class ClusteringVisualizerOne {
         
         // Initial plot and statistics
         this.updatePlot();
+        
+        // Render MathJax for dynamic content
+        setTimeout(() => this.renderMathJax(), 100);
     }
 
     setupControlListeners(suffix, displaySuffix) {
@@ -177,6 +207,9 @@ class ClusteringVisualizerOne {
         
         // Update statistics
         this.updateStatistics();
+        
+        // Render MathJax for plot legends
+        setTimeout(() => this.renderMathJax(), 50);
     }
 
     updateClusteringPlot(rValues, currentXiData) {
@@ -201,7 +234,7 @@ class ClusteringVisualizerOne {
                     width: 1
                 }
             },
-            name: `${paramInfo.name}: ${paramInfo.value_labels[this.currentValue]}`,
+            name: `${this.formatParameterName(paramInfo.name)}: ${paramInfo.value_labels[this.currentValue]}`,
             hovertemplate: 'r: %{x:.2f} Mpc/h<br>ξ(r): %{y:.4f}<extra></extra>'
         };
         traces.push(mainTrace);
@@ -246,7 +279,7 @@ class ClusteringVisualizerOne {
                     width: 1,
                     dash: 'dot'
                 },
-                name: `${paramInfo.name} Min: ${paramInfo.value_labels[0]}`,
+                name: `${this.formatParameterName(paramInfo.name)} Min: ${paramInfo.value_labels[0]}`,
                 opacity: 0.7,
                 hovertemplate: 'r: %{x:.2f} Mpc/h<br>ξ(r): %{y:.4f}<br>Min Value<extra></extra>'
             };
@@ -261,7 +294,7 @@ class ClusteringVisualizerOne {
                     width: 1,
                     dash: 'dot'
                 },
-                name: `${paramInfo.name} Max: ${paramInfo.value_labels[paramInfo.values.length - 1]}`,
+                name: `${this.formatParameterName(paramInfo.name)} Max: ${paramInfo.value_labels[paramInfo.values.length - 1]}`,
                 opacity: 0.7,
                 hovertemplate: 'r: %{x:.2f} Mpc/h<br>ξ(r): %{y:.4f}<br>Max Value<extra></extra>'
             };
@@ -299,7 +332,7 @@ class ClusteringVisualizerOne {
                 color: '#38a169',
                 size: 4
             },
-            name: `${paramInfo.name}: ${paramInfo.value_labels[this.currentValue]}`,
+            name: `${this.formatParameterName(paramInfo.name)}: ${paramInfo.value_labels[this.currentValue]}`,
             hovertemplate: 'log M: %{x:.2f}<br>n(M): %{y:.3e}<extra></extra>'
         };
         traces.push(mainTrace);
@@ -344,7 +377,7 @@ class ClusteringVisualizerOne {
                     width: 1,
                     dash: 'dot'
                 },
-                name: `${paramInfo.name} Min: ${paramInfo.value_labels[0]}`,
+                name: `${this.formatParameterName(paramInfo.name)} Min: ${paramInfo.value_labels[0]}`,
                 opacity: 0.7,
                 hovertemplate: 'log M: %{x:.2f}<br>n(M): %{y:.3e}<br>Min Value<extra></extra>'
             };
@@ -359,7 +392,7 @@ class ClusteringVisualizerOne {
                     width: 1,
                     dash: 'dot'
                 },
-                name: `${paramInfo.name} Max: ${paramInfo.value_labels[paramInfo.values.length - 1]}`,
+                name: `${this.formatParameterName(paramInfo.name)} Max: ${paramInfo.value_labels[paramInfo.values.length - 1]}`,
                 opacity: 0.7,
                 hovertemplate: 'log M: %{x:.2f}<br>n(M): %{y:.3e}<br>Max Value<extra></extra>'
             };
@@ -392,7 +425,10 @@ class ClusteringVisualizerOne {
                 showgrid: true,
                 gridcolor: '#e5e5e5',
                 titlefont: { size: 12 },
-                tickfont: { size: 10 }
+                tickfont: { size: 10 },
+                tickmode: 'array',
+                tickvals: [0.1, 1, 10, 100],
+                ticktext: ['10⁻¹', '10⁰', '10¹', '10²']
             },
             yaxis: {
                 title: 'ξ(r)',
@@ -401,7 +437,10 @@ class ClusteringVisualizerOne {
                 showgrid: true,
                 gridcolor: '#e5e5e5',
                 titlefont: { size: 12 },
-                tickfont: { size: 10 }
+                tickfont: { size: 10 },
+                tickmode: 'array',
+                tickvals: [0.001, 0.01, 0.1, 1, 10, 100],
+                ticktext: ['10⁻³', '10⁻²', '10⁻¹', '10⁰', '10¹', '10²']
             },
             margin: { l: 60, r: 20, t: 30, b: 50 },
             paper_bgcolor: 'rgba(0,0,0,0)',
@@ -438,7 +477,10 @@ class ClusteringVisualizerOne {
                 showgrid: true,
                 gridcolor: '#e5e5e5',
                 titlefont: { size: 12 },
-                tickfont: { size: 10 }
+                tickfont: { size: 10 },
+                tickmode: 'array',
+                tickvals: [1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1],
+                ticktext: ['10⁻⁸', '10⁻⁷', '10⁻⁶', '10⁻⁵', '10⁻⁴', '10⁻³', '10⁻²', '10⁻¹']
             },
             margin: { l: 60, r: 20, t: 30, b: 50 },
             paper_bgcolor: 'rgba(0,0,0,0)',

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <h2>LaTeX Formatting Test</h2>
+    
+    <p>Testing parameter names:</p>
+    <ul>
+        <li>Fiducial Model</li>
+        <li>\(\Omega_m\)</li>
+        <li>\(\Omega_b\)</li>
+        <li>\(h\)</li>
+        <li>\(A_s\)</li>
+        <li>\(n_s\)</li>
+        <li>\(w_0\)</li>
+        <li>\(w_a\)</li>
+        <li>\(N_{ur}\)</li>
+        <li>\(\alpha_s\)</li>
+        <li>\(m_{\nu}\)</li>
+    </ul>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+</body>
+</html>
