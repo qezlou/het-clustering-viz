@@ -218,14 +218,6 @@
             cursor: pointer;
         }
 
-        .plot-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-        }
-
         .plot-title {
             text-align: center;
             color: #2d3748;
@@ -370,11 +362,6 @@
                 padding: 25px;
             }
 
-            .plot-container {
-                padding: 25px;
-                min-height: 600px;
-            }
-
             .statistics-grid {
                 grid-template-columns: repeat(4, 1fr);
                 gap: 12px;
@@ -421,14 +408,13 @@
         </div>
 
         <div class="main-content">
-            <div class="plot-container">
-                <!-- Mobile layout -->
-                <div class="mobile-layout">
-                    <!-- Mass function plot first on mobile -->
-                    <div class="single-plot">
-                        <div class="plot-title">Halo Mass Function n(M)</div>
-                        <div id="mass-function-plot" style="width: 100%; height: 300px;"></div>
-                    </div>
+            <!-- Mobile layout -->
+            <div class="mobile-layout">
+                <!-- Mass function plot first on mobile -->
+                <div class="single-plot">
+                    <div class="plot-title">Halo Mass Function n(M)</div>
+                    <div id="mass-function-plot" style="width: 100%; height: 300px;"></div>
+                </div>
                     
                     <!-- Mobile controls between plots -->
                     <div class="controls-panel">
@@ -528,7 +514,6 @@
                 </div>
                 
                 <div class="loading" id="loading-message">Loading data...</div>
-            </div>
 
             <!-- Desktop controls sidebar -->
             <div class="controls-panel controls-desktop">
