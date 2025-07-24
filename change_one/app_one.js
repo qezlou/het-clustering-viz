@@ -472,7 +472,7 @@ class ClusteringVisualizerOne {
             plot_bgcolor: 'rgba(255,255,255,0.8)',
             showlegend: true,
             legend: {
-                x: 0.80,
+                x: 0.60,
                 y: 0.98,
                 bgcolor: 'rgba(255,255,255,0.8)',
                 font: { size: 10 }
@@ -490,7 +490,7 @@ class ClusteringVisualizerOne {
             xaxis: {
                 title: 'M [M☉]',
                 type: 'log',
-                range: [Math.log10(1e10), Math.log10(1e13)], // Log range: 10^10 to 10^13 solar masses
+                range: [Math.log10(1e11), Math.log10(1e13)], // Log range: 10^10 to 10^13 solar masses
                 showgrid: true,
                 gridcolor: '#e5e5e5',
                 titlefont: { size: 12 },
@@ -516,8 +516,8 @@ class ClusteringVisualizerOne {
             plot_bgcolor: 'rgba(255,255,255,0.8)',
             showlegend: true,
             legend: {
-                x: 0.80,
-                y: 0.98,
+                x: 0.6,
+                y: 0.95,
                 bgcolor: 'rgba(255,255,255,0.8)',
                 font: { size: 10 }
             },
