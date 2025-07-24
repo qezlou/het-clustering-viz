@@ -35,17 +35,6 @@ else
 fi
 cd ..
 
-# Change one version
-echo "   📊 Generating change_one data..."
-cd change_one
-if [ -f "gen_data_one.py" ]; then
-    python3 gen_data_one.py
-    python3 convert_data_one.py
-    echo "   ✅ change_one data generated"
-else
-    echo "   ⚠️  gen_data_one.py not found in change_one/"
-fi
-cd ..
 
 # Check git status
 if [ ! -d ".git" ]; then
