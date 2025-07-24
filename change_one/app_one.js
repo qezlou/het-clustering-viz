@@ -490,7 +490,7 @@ class ClusteringVisualizerOne {
             xaxis: {
                 title: 'M [M☉]',
                 type: 'log',
-                range: [Math.log10(1e11), Math.log10(1e13)], // Log range: 10^11 to 10^13 solar masses
+                range: [Math.log10(3e10), Math.log10(1e13)], // Log range: 10^11 to 10^13 solar masses
                 showgrid: true,
                 gridcolor: '#e5e5e5',
                 titlefont: { size: 12 },
