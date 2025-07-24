@@ -37,7 +37,7 @@ class ClusteringVisualizerOne {
                 option.value = index;
                 // For dropdowns, use text representation since HTML select doesn't render LaTeX
                 const displayName = this.getParameterDisplayName(param.name);
-                option.textContent = `${displayName} (${param.range_string})`;
+                option.textContent = `${displayName}`;
                 select.appendChild(option);
             });
         });
