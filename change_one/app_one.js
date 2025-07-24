@@ -490,14 +490,14 @@ class ClusteringVisualizerOne {
             xaxis: {
                 title: 'M [M☉]',
                 type: 'log',
-                range: [Math.log10(3e10), Math.log10(1e13)], // Log range: 10^11 to 10^13 solar masses
+                range: [Math.log10(1e10), Math.log10(1e13)], // Log range: 10^10 to 10^13 solar masses
                 showgrid: true,
                 gridcolor: '#e5e5e5',
                 titlefont: { size: 12 },
                 tickfont: { size: 10 },
                 tickmode: 'array',
-                tickvals: [1e11, 3e11, 1e12, 3e12, 1e13],
-                ticktext: ['10¹¹', '3×10¹¹', '10¹²', '3×10¹²', '10¹³']
+                tickvals: [3e10, 1e11, 3e11, 1e12, 3e12, 1e13],
+                ticktext: ['3×10¹⁰', '10¹¹', '3×10¹¹', '10¹²', '3×10¹²', '10¹³']
             },
             yaxis: {
                 title: 'n(M) [Mpc⁻³ dex⁻¹]',
