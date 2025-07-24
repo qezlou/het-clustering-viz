@@ -472,7 +472,7 @@ class ClusteringVisualizerOne {
             plot_bgcolor: 'rgba(255,255,255,0.8)',
             showlegend: true,
             legend: {
-                x: 0.02,
+                x: 0.80,
                 y: 0.98,
                 bgcolor: 'rgba(255,255,255,0.8)',
                 font: { size: 10 }
@@ -502,7 +502,7 @@ class ClusteringVisualizerOne {
             yaxis: {
                 title: 'n(M) [Mpc⁻³ dex⁻¹]',
                 type: 'log',
-                range: [-8, -1], // Fixed range for mass function
+                range: [-4, -1], // Fixed range for mass function
                 showgrid: true,
                 gridcolor: '#e5e5e5',
                 titlefont: { size: 12 },
@@ -516,7 +516,7 @@ class ClusteringVisualizerOne {
             plot_bgcolor: 'rgba(255,255,255,0.8)',
             showlegend: true,
             legend: {
-                x: 0.02,
+                x: 0.80,
                 y: 0.98,
                 bgcolor: 'rgba(255,255,255,0.8)',
                 font: { size: 10 }
