@@ -458,14 +458,14 @@ class ClusteringVisualizerOne {
             yaxis: {
                 title: 'ξ(r)',
                 type: 'log',
-                range: [-3, 2], // Fixed range: 0.001 to 100
+                range: [-3, 3], // Fixed range: 0.001 to 100
                 showgrid: true,
                 gridcolor: '#e5e5e5',
                 titlefont: { size: 12 },
                 tickfont: { size: 10 },
                 tickmode: 'array',
-                tickvals: [0.001, 0.01, 0.1, 1, 10, 100],
-                ticktext: ['10⁻³', '10⁻²', '10⁻¹', '10⁰', '10¹', '10²']
+                tickvals: [0.001, 0.01, 0.1, 1, 10, 100, 1000],
+                ticktext: ['10⁻³', '10⁻²', '10⁻¹', '10⁰', '10¹', '10²', '10³']
             },
             margin: { l: 60, r: 20, t: 30, b: 50 },
             paper_bgcolor: 'rgba(0,0,0,0)',
