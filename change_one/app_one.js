@@ -35,19 +35,43 @@ class ClusteringVisualizerOne {
             this.data.parameters.forEach((param, index) => {
                 const option = document.createElement('option');
                 option.value = index;
-                // Use LaTeX-formatted name
-                const latexName = this.formatParameterName(param.name);
-                option.innerHTML = `${latexName} (${param.range_string})`;
+                // For dropdowns, use text representation since HTML select doesn't render LaTeX
+                const displayName = this.getParameterDisplayName(param.name);
+                option.textContent = `${displayName} (${param.range_string})`;
                 select.appendChild(option);
             });
         });
         
-        // Trigger MathJax to re-render the selects
-        this.renderMathJax();
+        // Create custom styled dropdowns with LaTeX after page loads
+        setTimeout(() => this.createStyledParameterSelects(), 100);
+    }
+
+    getParameterDisplayName(name) {
+        // Convert LaTeX parameter names to Unicode/text equivalents for dropdowns
+        const displayMap = {
+            'Fiducial Model': 'Fiducial Model',
+            '\\Omega_m': 'Ωₘ',
+            '\\Omega_b': 'Ωᵦ', 
+            'h': 'h',
+            'A_s': 'Aₛ',
+            'n_s': 'nₛ',
+            'w_0': 'w₀',
+            'w_a': 'wₐ',
+            'N_{ur}': 'Nᵤᵣ',
+            '\\alpha_s': 'αₛ',
+            'm_{\\nu}': 'mᵥ'
+        };
+        
+        return displayMap[name] || name;
+    }
+
+    createStyledParameterSelects() {
+        // This function can be extended later for custom dropdown styling
+        // For now, we'll rely on the Unicode characters in the text
     }
 
     formatParameterName(name) {
-        // Convert parameter names to LaTeX format for display
+        // Convert parameter names to LaTeX format for plot legends
         if (name === 'Fiducial Model') {
             return 'Fiducial Model';
         }
@@ -312,15 +336,16 @@ class ClusteringVisualizerOne {
         if (document.getElementById('clustering-plot-desktop')) {
             Plotly.newPlot('clustering-plot-desktop', traces, layout, config);
         }
-    }
-
-    updateMassFunctionPlot(mValues, currentNmData) {
+    }    updateMassFunctionPlot(mValues, currentNmData) {
         const traces = [];
         const paramInfo = this.data.parameters[this.currentParameter];
         
+        // Convert log mass values to actual mass values (10^logM)
+        const massValues = mValues.map(logM => Math.pow(10, logM));
+        
         // Main trace - current parameter and value
         const mainTrace = {
-            x: mValues,
+            x: massValues,
             y: currentNmData,
             type: 'scatter',
             mode: 'lines+markers',
@@ -333,7 +358,7 @@ class ClusteringVisualizerOne {
                 size: 4
             },
             name: `${this.formatParameterName(paramInfo.name)}: ${paramInfo.value_labels[this.currentValue]}`,
-            hovertemplate: 'log M: %{x:.2f}<br>n(M): %{y:.3e}<extra></extra>'
+            hovertemplate: 'M: %{x:.2e} M☉<br>n(M): %{y:.3e}<extra></extra>'
         };
         traces.push(mainTrace);
 
@@ -346,7 +371,7 @@ class ClusteringVisualizerOne {
         if (showFiducial && this.currentParameter !== 0) {
             const fiducialNmData = this.data.nm_data[0][0]; // Fiducial model
             const fiducialTrace = {
-                x: mValues,
+                x: massValues,
                 y: fiducialNmData,
                 type: 'scatter',
                 mode: 'lines',
@@ -356,7 +381,7 @@ class ClusteringVisualizerOne {
                     dash: 'dash'
                 },
                 name: 'Fiducial Model',
-                hovertemplate: 'log M: %{x:.2f}<br>n(M): %{y:.3e}<br>Fiducial<extra></extra>'
+                hovertemplate: 'M: %{x:.2e} M☉<br>n(M): %{y:.3e}<br>Fiducial<extra></extra>'
             };
             traces.push(fiducialTrace);
         }
@@ -368,7 +393,7 @@ class ClusteringVisualizerOne {
             const maxNmData = this.data.nm_data[this.currentParameter][paramInfo.values.length - 1];
             
             const minTrace = {
-                x: mValues,
+                x: massValues,
                 y: minNmData,
                 type: 'scatter',
                 mode: 'lines',
@@ -379,11 +404,11 @@ class ClusteringVisualizerOne {
                 },
                 name: `${this.formatParameterName(paramInfo.name)} Min: ${paramInfo.value_labels[0]}`,
                 opacity: 0.7,
-                hovertemplate: 'log M: %{x:.2f}<br>n(M): %{y:.3e}<br>Min Value<extra></extra>'
+                hovertemplate: 'M: %{x:.2e} M☉<br>n(M): %{y:.3e}<br>Min Value<extra></extra>'
             };
             
             const maxTrace = {
-                x: mValues,
+                x: massValues,
                 y: maxNmData,
                 type: 'scatter',
                 mode: 'lines',
@@ -394,7 +419,7 @@ class ClusteringVisualizerOne {
                 },
                 name: `${this.formatParameterName(paramInfo.name)} Max: ${paramInfo.value_labels[paramInfo.values.length - 1]}`,
                 opacity: 0.7,
-                hovertemplate: 'log M: %{x:.2f}<br>n(M): %{y:.3e}<br>Max Value<extra></extra>'
+                hovertemplate: 'M: %{x:.2e} M☉<br>n(M): %{y:.3e}<br>Max Value<extra></extra>'
             };
             
             traces.push(minTrace, maxTrace);
@@ -402,7 +427,7 @@ class ClusteringVisualizerOne {
 
         const massFunctionLayout = this.createMassFunctionLayoutFixed();
         const config = this.createConfig();
-        
+
         // Plot to both mobile and desktop containers
         if (document.getElementById('mass-function-plot')) {
             Plotly.newPlot('mass-function-plot', traces, massFunctionLayout, config);
@@ -463,12 +488,16 @@ class ClusteringVisualizerOne {
                 font: { size: 14 }
             },
             xaxis: {
-                title: 'log₁₀(M [M☉])',
-                range: [11, 16], // Fixed range: 10^11 to 10^16 solar masses
+                title: 'M [M☉]',
+                type: 'log',
+                range: [Math.log10(1e11), Math.log10(1e13)], // Log range: 10^11 to 10^13 solar masses
                 showgrid: true,
                 gridcolor: '#e5e5e5',
                 titlefont: { size: 12 },
-                tickfont: { size: 10 }
+                tickfont: { size: 10 },
+                tickmode: 'array',
+                tickvals: [1e11, 3e11, 1e12, 3e12, 1e13],
+                ticktext: ['10¹¹', '3×10¹¹', '10¹²', '3×10¹²', '10¹³']
             },
             yaxis: {
                 title: 'n(M) [Mpc⁻³ dex⁻¹]',
@@ -536,7 +565,7 @@ class ClusteringVisualizerOne {
         // Calculate n(M) statistics
         const nmMax = Math.max(...currentNmData);
         const nmMaxIndex = currentNmData.indexOf(nmMax);
-        const nmPeakM = mValues[nmMaxIndex];
+        const nmPeakM = Math.pow(10, mValues[nmMaxIndex]); // Convert log to actual mass
 
         // Calculate total number density (integral)
         let nmTotal = 0;
@@ -562,7 +591,7 @@ class ClusteringVisualizerOne {
         this.updateStatElement('xi-integral', xiIntegral.toExponential(2));
 
         this.updateStatElement('nm-max', nmMax.toExponential(2));
-        this.updateStatElement('nm-peak-m', `10^${nmPeakM.toFixed(1)}`);
+        this.updateStatElement('nm-peak-m', nmPeakM.toExponential(2));
         this.updateStatElement('nm-total', nmTotal.toExponential(2));
         this.updateStatElement('nm-highmass', nmHighMass.toExponential(2));
     }
