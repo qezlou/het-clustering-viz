@@ -496,8 +496,8 @@ class ClusteringVisualizerOne {
                 titlefont: { size: 12 },
                 tickfont: { size: 10 },
                 tickmode: 'array',
-                tickvals: [3e10, 1e11, 3e11, 1e12, 3e12, 1e13],
-                ticktext: ['3×10¹⁰', '10¹¹', '3×10¹¹', '10¹²', '3×10¹²', '10¹³']
+                tickvals: [1e11, 3e11, 1e12, 3e12],
+                ticktext: ['10¹¹', '3×10¹¹', '10¹²', '3×10¹²']
             },
             yaxis: {
                 title: 'n(M) [Mpc⁻³ dex⁻¹]',
@@ -508,8 +508,8 @@ class ClusteringVisualizerOne {
                 titlefont: { size: 12 },
                 tickfont: { size: 10 },
                 tickmode: 'array',
-                tickvals: [1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1],
-                ticktext: ['10⁻⁸', '10⁻⁷', '10⁻⁶', '10⁻⁵', '10⁻⁴', '10⁻³', '10⁻²', '10⁻¹']
+                tickvals: [1e-4, 1e-3, 1e-2, 1e-1],
+                ticktext: ['10⁻⁴', '10⁻³', '10⁻²', '10⁻¹']
             },
             margin: { l: 60, r: 20, t: 30, b: 50 },
             paper_bgcolor: 'rgba(0,0,0,0)',
