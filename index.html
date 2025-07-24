@@ -289,70 +289,91 @@
 
     <div class="container">
         <header>
-            <h1 class="main-title">HETDEX Cosmic Clustering</h1>
-            <p class="subtitle">Interactive Visualization Platform</p>
+            <h1 class="main-title">Modeling the Galaxy Clustering with AI</h1>
+            <p class="subtitle">Translating Observations into Fundamental Physics</p>
             <p class="description">
-                Explore the cosmic web through advanced clustering analysis and interactive visualizations
-                of galaxy distributions and dark matter simulations.
+                Explore how observed signal in surveys such as HETDEX impact our understanding of the universe's structure and evolution.
             </p>
         </header>
+
+        <div class="info-card">
+                <h2 class="card-title">
+                    <span class="card-icon">🖥️</span>
+                    Galaxy Clustering Simulations
+                </h2>
+                <div class="card-content">
+                    <div class="placeholder-text">
+                        <p><strong>What do we model?</strong></p>
+                        <p>We use a fast surrogate model trained on a limited set of high-resolution simulations to accurately predict galaxy clustering 
+                            for emission line galaxies observed by surveys like HETDEX and DESI. This work is based on ongoing research by Qezlou et al. (in preparation).</p>
+                        <ul>
+                            <li><strong>Efficiency:</strong> Enables rapid predictions compared to full simulations.</li>
+                            <li><strong>Parameter sensitivity:</strong> Explores how galaxy clustering depends on a 10-dimensional cosmological parameter space.</li>
+                            <li><strong>Simulation power:</strong> Leverages the detailed GOKU simulation suite to resolve faint, low-mass galaxies that are otherwise hard to model. 
+                                (<a href="https://www.arxiv.org/abs/2501.06296" target="_blank" style="color:#64b5f6;text-decoration:underline;">arXiv:2501.06296</a>)
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        
 
         <div class="content-grid">
             <div class="info-card">
                 <h2 class="card-title">
                     <span class="card-icon">🌌</span>
-                    HETDEX Galaxy Survey
+                    Emission Line Galaxy Surveys, e.g. <a href="https://www.hetdex.org" target="_blank" style="color:#64b5f6;text-decoration:underline;">HETDEX</a>
                 </h2>
                 <div class="card-content">
                     <div class="placeholder-text">
-                        <p><strong>Add your HETDEX description here:</strong></p>
-                        <p>Describe the Hobby-Eberly Telescope Dark Energy Experiment (HETDEX), its goals, methodology, and significance in understanding dark energy and the large-scale structure of the universe. Include details about the survey area, redshift range, and scientific objectives.</p>
+                        <p><strong>Mapping the universe with emission line galaxies:</strong></p>
+                        <p>Emission line galaxies are far more numerous than their continuum-emitting counterparts, making them ideal tracers of the cosmic web. Large-scale surveys like <a href="https://www.hetdex.org" target="_blank" style="color:#64b5f6;text-decoration:underline;">HETDEX</a> produce detailed maps of the universe's structure and help us probe:</p>
+                        <ul>
+                            <li>The nature of dark energy and the accelerating expansion of the universe</li>
+                            <li>How tiny fluctuations in the early universe grew into galaxies and clusters</li>
+                            <li>The role of elusive particles like neutrinos in shaping cosmic evolution</li>
+                        </ul>
                     </div>
                 </div>
             </div>
 
-            <div class="info-card">
-                <h2 class="card-title">
-                    <span class="card-icon">🖥️</span>
-                    Our Simulations
-                </h2>
-                <div class="card-content">
-                    <div class="placeholder-text">
-                        <p><strong>Add your simulation description here:</strong></p>
-                        <p>Describe your cosmological simulations, the numerical methods used, the physical processes modeled, and how they complement the observational data from HETDEX. Include information about the simulation parameters, resolution, and the specific clustering analysis techniques employed.</p>
-                    </div>
-                </div>
-            </div>
         </div>
 
+        <!--
         <div class="navigation">
-            <h2 class="nav-title">Explore Our Visualizations</h2>
+            <h2 class="nav-title">Explore how fundamental physics shapes galaxy clustering</h2>
             <div class="nav-buttons">
-                <a href="change_all/" class="nav-button">
-                    <div class="nav-button-content">
-                        <span class="nav-button-icon">🔄</span>
-                        <div class="nav-button-title">Change All Parameters</div>
-                        <div class="nav-button-desc">
-                            Interactive exploration of how all cosmological parameters affect clustering patterns simultaneously
-                        </div>
-                    </div>
-                </a>
+            <a href="change_all/" class="nav-button">
+                <div class="nav-button-content">
+                <span class="nav-button-icon">🔄</span>
+                <div class="nav-button-title">Change All Parameters</div>
+                <div class="nav-button-desc">
+                    Interactive exploration of how all cosmological parameters affect clustering patterns simultaneously
+                </div>
+                </div>
+            </a>
+        -->
                 
                 <a href="change_one/" class="nav-button">
                     <div class="nav-button-content">
                         <span class="nav-button-icon">📊</span>
-                        <div class="nav-button-title">Single Parameter Analysis</div>
-                        <div class="nav-button-desc">
-                            Focused analysis of individual parameter effects on cosmic structure formation
-                        </div>
+                        <div class="nav-button-title">How Physics Shapes Clustering</div>
+                    <div class="nav-button-desc">
+                        See how each fundamental parameter — like matter density, dark energy, or neutrino mass — changes galaxy clustering patterns
+                    </div>
                     </div>
                 </a>
             </div>
         </div>
 
         <footer>
-            <p>HETDEX Cosmic Clustering Visualization Platform</p>
+            <p>Galaxy Clustering Visualization in 10-dimensional parameter space</p>
             <p>Interactive tools for exploring the universe's large-scale structure</p>
+            <div style="margin-top:2rem; font-size:1rem; color:#90a4ae;">
+                <strong>Acknowledgements:</strong>
+                <br>
+                Goku Simulation Suite team and HETDEX collaboration
+            </div>
         </footer>
     </div>
 
