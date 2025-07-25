@@ -95,6 +95,10 @@ class ClusteringVisualizerOne {
     initializeApp() {
         document.getElementById('loading-message').style.display = 'none';
         
+        // Debug: Log available parameters
+        console.log('All parameters:', this.data.parameters);
+        console.log('Starting with parameter index:', 1);
+        
         // Set up event listeners for both mobile and desktop controls
         this.setupControlListeners('', ''); // Mobile controls
         this.setupControlListeners('-desktop', '-desktop'); // Desktop controls
@@ -228,6 +232,9 @@ class ClusteringVisualizerOne {
         
         // Update mass function plot
         this.updateMassFunctionPlot(mValues, currentNmData);
+        
+        // Update parameter figure
+        this.updateParameterFigure();
         
         // Update statistics
         this.updateStatistics();
@@ -437,6 +444,94 @@ class ClusteringVisualizerOne {
         }
     }
 
+    updateParameterFigure() {
+        if (!this.data) {
+            return;
+        }
+        
+        if (this.currentParameter === 0) {
+            // Hide figures for fiducial model
+            this.hideFigures();
+            return;
+        }
+
+        const paramInfo = this.data.parameters[this.currentParameter];
+        
+        if (!paramInfo) {
+            console.error('No parameter info found for index:', this.currentParameter);
+            this.hideFigures();
+            return;
+        }
+        
+        const paramName = paramInfo.name;
+        
+        if (!paramName || paramName.trim() === '') {
+            console.error('Parameter name is empty or undefined');
+            this.hideFigures();
+            return;
+        }
+        
+        // Convert JSON parameter names to simplified figure filenames
+        const figureName = this.getParameterFigureName(paramName);
+        
+        // Parameter value index (1-based for figure naming)
+        const valueIndex = this.currentValue + 1;
+        
+        // Construct figure path
+        const figurePath = `figs/${figureName}_${valueIndex}.png`;
+        
+        // No need to encode the path since we removed special characters
+        const encodedFigurePath = figurePath;
+        
+        // Update both mobile and desktop figures with the dynamic path
+        this.loadFigure(encodedFigurePath, 'parameter-figure', 'figure-loading', 'figure-error');
+        this.loadFigure(encodedFigurePath, 'parameter-figure-desktop', 'figure-loading-desktop', 'figure-error-desktop');
+    }
+
+    loadFigure(figurePath, imgId, loadingId, errorId) {
+        const img = document.getElementById(imgId);
+        const loading = document.getElementById(loadingId);
+        const error = document.getElementById(errorId);
+        
+        if (!img || !loading || !error) return;
+        
+        // Hide loading and error states
+        loading.style.display = 'none';
+        error.style.display = 'none';
+        
+        // Set up error handling for the main image
+        img.onload = () => {
+            img.style.display = 'block';
+        };
+        
+        img.onerror = () => {
+            img.style.display = 'none';
+            error.style.display = 'block';
+            error.textContent = `Figure not found: ${figurePath}`;
+        };
+        
+        // Load the image directly
+        img.src = figurePath;
+    }
+
+    hideFigures() {
+        // Hide figures for fiducial model
+        const elements = [
+            { img: 'parameter-figure', loading: 'figure-loading', error: 'figure-error' },
+            { img: 'parameter-figure-desktop', loading: 'figure-loading-desktop', error: 'figure-error-desktop' }
+        ];
+        
+        elements.forEach(({ img, loading, error }) => {
+            const imgEl = document.getElementById(img);
+            const loadingEl = document.getElementById(loading);
+            const errorEl = document.getElementById(error);
+            
+            if (imgEl) imgEl.style.display = 'none';
+            if (loadingEl) loadingEl.style.display = 'none';
+            if (errorEl) errorEl.style.display = 'none';
+        });
+    }
+
     createLayoutFixed() {
         return {
             title: {
@@ -613,6 +708,24 @@ class ClusteringVisualizerOne {
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);
         };
+    }
+
+    getParameterFigureName(paramName) {
+        // Map JSON parameter names to simplified figure filenames
+        const figureNameMap = {
+            '\\Omega_m': 'Omega_m',
+            '\\Omega_b': 'Omega_b', 
+            'h': 'h',
+            'A_s': 'A_s',
+            'n_s': 'n_s',
+            'w_0': 'w_0',
+            'w_a': 'w_a',
+            'N_{ur}': 'N_{ur}',
+            '\\alpha_s': 'alpha_s',
+            'm_{\\nu}': 'm_{nu}'
+        };
+        
+        return figureNameMap[paramName] || paramName;
     }
 }
 

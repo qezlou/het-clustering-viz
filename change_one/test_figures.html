@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Figure Loading Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        img { max-width: 500px; border: 1px solid #ccc; margin: 10px 0; }
+        .test-section { margin: 20px 0; padding: 10px; border: 1px solid #ddd; }
+        button { margin: 5px; padding: 5px 10px; }
+    </style>
+</head>
+<body>
+    <h1>Figure Loading Test</h1>
+    
+    <div class="test-section">
+        <h3>Current Figure</h3>
+        <p>Parameter: <span id="param-name">Loading...</span></p>
+        <p>Value Index: <span id="value-index">Loading...</span></p>
+        <p>Figure Path: <span id="figure-path">Loading...</span></p>
+        <img id="test-image" src="" alt="Test figure" style="display:none;">
+        <div id="error-msg" style="color: red; display:none;"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test Different Values</h3>
+        <button onclick="testValue(1)">Value 1</button>
+        <button onclick="testValue(2)">Value 2</button>
+        <button onclick="testValue(3)">Value 3</button>
+        <button onclick="testValue(4)">Value 4</button>
+        <button onclick="testValue(5)">Value 5</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test Different Parameters</h3>
+        <button onclick="testParam('\\Omega_m')">Ωₘ</button>
+        <button onclick="testParam('\\Omega_b')">Ωᵦ</button>
+        <button onclick="testParam('h')">h</button>
+        <button onclick="testParam('A_s')">Aₛ</button>
+        <button onclick="testParam('n_s')">nₛ</button>
+    </div>
+
+    <script>
+        let currentParam = '\\Omega_m';
+        let currentValue = 1;
+        
+        function testParam(paramName) {
+            currentParam = paramName;
+            updateFigure();
+        }
+        
+        function testValue(valueIndex) {
+            currentValue = valueIndex;
+            updateFigure();
+        }
+        
+        function updateFigure() {
+            const figureName = `$${currentParam}$`;
+            const figurePath = `figs/${figureName}_${currentValue}.png`;
+            const encodedPath = encodeURI(figurePath);
+            
+            document.getElementById('param-name').textContent = currentParam;
+            document.getElementById('value-index').textContent = currentValue;
+            document.getElementById('figure-path').textContent = encodedPath;
+            
+            const img = document.getElementById('test-image');
+            const errorMsg = document.getElementById('error-msg');
+            
+            img.style.display = 'none';
+            errorMsg.style.display = 'none';
+            
+            img.onload = function() {
+                img.style.display = 'block';
+                console.log('✓ Successfully loaded:', encodedPath);
+            };
+            
+            img.onerror = function() {
+                errorMsg.textContent = `Failed to load: ${encodedPath}`;
+                errorMsg.style.display = 'block';
+                console.log('✗ Failed to load:', encodedPath);
+            };
+            
+            img.src = encodedPath;
+        }
+        
+        // Initialize
+        updateFigure();
+    </script>
+</body>
+</html>
