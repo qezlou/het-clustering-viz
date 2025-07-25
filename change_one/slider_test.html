@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slider Sync Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .slider-test { margin: 20px 0; padding: 10px; border: 1px solid #ccc; }
+        .slider { width: 100%; margin: 10px 0; }
+        .debug { background: #f0f0f0; padding: 10px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Slider Synchronization Test</h1>
+    
+    <div class="slider-test">
+        <h3>Slider 1 (Original Mobile)</h3>
+        <input type="range" min="0" max="4" value="0" class="slider" id="value-slider">
+        <div id="value-display">0 / 4</div>
+    </div>
+    
+    <div class="slider-test">
+        <h3>Slider 2 (Desktop)</h3>
+        <input type="range" min="0" max="4" value="0" class="slider" id="value-slider-desktop">
+        <div id="value-display-desktop">0 / 4</div>
+    </div>
+    
+    <div class="slider-test">
+        <h3>Slider 3 (Additional Mobile)</h3>
+        <input type="range" min="0" max="4" value="0" class="slider" id="value-slider-mobile2">
+        <div id="value-display-mobile2">0 / 4</div>
+    </div>
+    
+    <div class="debug" id="debug-info">
+        Debug info will appear here...
+    </div>
+    
+    <script>
+        let currentValue = 0;
+        
+        function updateAllSliders() {
+            const sliders = [
+                document.getElementById('value-slider'),
+                document.getElementById('value-slider-desktop'),
+                document.getElementById('value-slider-mobile2')
+            ].filter(s => s !== null);
+            
+            const displays = [
+                document.getElementById('value-display'),
+                document.getElementById('value-display-desktop'),
+                document.getElementById('value-display-mobile2')
+            ].filter(d => d !== null);
+            
+            sliders.forEach(slider => {
+                slider.value = currentValue;
+            });
+            
+            displays.forEach(display => {
+                display.textContent = `${currentValue} / 4`;
+            });
+            
+            document.getElementById('debug-info').textContent = 
+                `Current value: ${currentValue}, Sliders found: ${sliders.length}, Displays found: ${displays.length}`;
+        }
+        
+        function setupSlider(sliderId) {
+            const slider = document.getElementById(sliderId);
+            if (slider) {
+                slider.addEventListener('input', (e) => {
+                    currentValue = parseInt(e.target.value);
+                    updateAllSliders();
+                    console.log(`Slider ${sliderId} changed to ${currentValue}`);
+                });
+            }
+        }
+        
+        // Set up all sliders
+        setupSlider('value-slider');
+        setupSlider('value-slider-desktop');
+        setupSlider('value-slider-mobile2');
+        
+        // Initial sync
+        updateAllSliders();
+    </script>
+</body>
+</html>
