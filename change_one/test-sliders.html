@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Slider Sync Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .section { margin: 20px 0; padding: 10px; border: 1px solid #ccc; }
+        .slider { width: 100%; margin: 10px 0; }
+        .display { font-weight: bold; color: #333; }
+    </style>
+</head>
+<body>
+    <h1>Slider Synchronization Test</h1>
+    
+    <div class="section">
+        <h3>Mobile Slider 1</h3>
+        <input type="range" min="0" max="4" value="0" class="slider" id="value-slider">
+        <div class="display" id="value-display">Value: 0</div>
+    </div>
+    
+    <div class="section">
+        <h3>Desktop Slider</h3>
+        <input type="range" min="0" max="4" value="0" class="slider" id="value-slider-desktop">
+        <div class="display" id="value-display-desktop">Value: 0</div>
+    </div>
+    
+    <div class="section">
+        <h3>Mobile Slider 2</h3>
+        <input type="range" min="0" max="4" value="0" class="slider" id="value-slider-mobile2">
+        <div class="display" id="value-display-mobile2">Value: 0</div>
+    </div>
+    
+    <script>
+        // Test sync function
+        function syncAllSliders(currentValue) {
+            const sliders = [
+                document.getElementById('value-slider'),
+                document.getElementById('value-slider-desktop'),
+                document.getElementById('value-slider-mobile2')
+            ].filter(slider => slider !== null);
+            
+            console.log('Syncing all sliders to value:', currentValue, 'Found sliders:', sliders.map(s => s.id));
+            
+            sliders.forEach(slider => {
+                console.log(`Setting slider ${slider.id} to value:`, currentValue);
+                slider.value = currentValue;
+            });
+        }
+        
+        function syncValueDisplays(currentValue) {
+            const displays = [
+                document.getElementById('value-display'),
+                document.getElementById('value-display-desktop'),
+                document.getElementById('value-display-mobile2')
+            ].filter(display => display !== null);
+            
+            displays.forEach(display => {
+                display.textContent = `Value: ${currentValue}`;
+            });
+        }
+        
+        // Add event listeners to all sliders
+        function setupSlider(sliderId) {
+            const slider = document.getElementById(sliderId);
+            if (slider) {
+                slider.addEventListener('input', (e) => {
+                    const currentValue = parseInt(e.target.value);
+                    console.log(`Slider ${sliderId} changed to:`, currentValue);
+                    syncAllSliders(currentValue);
+                    syncValueDisplays(currentValue);
+                });
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            setupSlider('value-slider');
+            setupSlider('value-slider-desktop');
+            setupSlider('value-slider-mobile2');
+        });
+    </script>
+</body>
+</html>

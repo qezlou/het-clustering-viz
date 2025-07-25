@@ -102,11 +102,24 @@ class ClusteringVisualizerOne {
         // Set up event listeners for both mobile and desktop controls
         this.setupControlListeners('', ''); // Mobile controls
         this.setupControlListeners('-desktop', '-desktop'); // Desktop controls
-        this.setupControlListeners('-mobile2', '-mobile2'); // Additional mobile slider
+        
+        // Set up the additional mobile slider separately with a small delay
+        setTimeout(() => {
+            this.setupAdditionalMobileSlider();
+            // Ensure all sliders are synced after setup
+            this.syncAllSliders();
+            this.syncValueDisplays();
+            // Force update plots to ensure figures load
+            this.updatePlot();
+        }, 200);
         
         // Set initial parameter and sync both controls
         this.setParameter(1); // Start with first real parameter
         this.setValue(0); // Start with first value
+        
+        // Ensure all sliders are synced initially
+        this.syncControls();
+        this.syncValueDisplays();
         
         // Initial plot and statistics
         this.updatePlot();
@@ -132,6 +145,7 @@ class ClusteringVisualizerOne {
         if (valueSlider) {
             valueSlider.addEventListener('input', (e) => {
                 this.currentValue = parseInt(e.target.value);
+                this.syncAllSliders();
                 this.syncValueDisplays();
                 this.updatePlot();
             });
@@ -155,6 +169,38 @@ class ClusteringVisualizerOne {
                 }
                 this.updatePlot();
             });
+        }
+   }
+
+    setupAdditionalMobileSlider() {
+        const valueSlider = document.getElementById('value-slider-mobile2');
+        
+        console.log('Setting up additional mobile slider:', valueSlider);
+        
+        if (valueSlider) {
+            valueSlider.addEventListener('input', (e) => {
+                this.currentValue = parseInt(e.target.value);
+                this.syncAllSliders();
+                this.syncValueDisplays();
+                this.updatePlot();
+            });
+            
+            // Improve mobile touch handling
+            valueSlider.addEventListener('touchstart', (e) => {
+                e.stopPropagation();
+            }, { passive: true });
+            
+            valueSlider.addEventListener('touchmove', (e) => {
+                e.stopPropagation();
+            }, { passive: true });
+        } else {
+            console.log('Additional mobile slider not found!');
+        }
+        
+        // Sync this slider with current values
+        if (valueSlider && this.data) {
+            this.updateValueSlider();
+            this.syncValueDisplays();
         }
     }
 
@@ -180,6 +226,8 @@ class ClusteringVisualizerOne {
             document.getElementById('value-slider-desktop'),
             document.getElementById('value-slider-mobile2')
         ].filter(slider => slider !== null);
+        
+        console.log('Updating sliders, found:', sliders.length, 'current value:', this.currentValue);
         
         sliders.forEach(slider => {
             slider.min = 0;
@@ -217,6 +265,19 @@ class ClusteringVisualizerOne {
         
         displays.forEach(display => {
             display.textContent = displayText;
+        });
+    }
+
+    syncAllSliders() {
+        // Sync all value sliders to the current value
+        const sliders = [
+            document.getElementById('value-slider'),
+            document.getElementById('value-slider-desktop'),
+            document.getElementById('value-slider-mobile2')
+        ].filter(slider => slider !== null);
+        
+        sliders.forEach(slider => {
+            slider.value = this.currentValue;
         });
     }
 
