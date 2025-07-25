@@ -102,6 +102,7 @@ class ClusteringVisualizerOne {
         // Set up event listeners for both mobile and desktop controls
         this.setupControlListeners('', ''); // Mobile controls
         this.setupControlListeners('-desktop', '-desktop'); // Desktop controls
+        this.setupControlListeners('-mobile2', '-mobile2'); // Additional mobile slider
         
         // Set initial parameter and sync both controls
         this.setParameter(1); // Start with first real parameter
@@ -176,7 +177,8 @@ class ClusteringVisualizerOne {
         // Update both mobile and desktop sliders
         const sliders = [
             document.getElementById('value-slider'),
-            document.getElementById('value-slider-desktop')
+            document.getElementById('value-slider-desktop'),
+            document.getElementById('value-slider-mobile2')
         ].filter(slider => slider !== null);
         
         sliders.forEach(slider => {
@@ -209,7 +211,8 @@ class ClusteringVisualizerOne {
         // Update both mobile and desktop displays
         const displays = [
             document.getElementById('value-display'),
-            document.getElementById('value-display-desktop')
+            document.getElementById('value-display-desktop'),
+            document.getElementById('value-display-mobile2')
         ].filter(display => display !== null);
         
         displays.forEach(display => {
